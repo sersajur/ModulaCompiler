@@ -26,3 +26,9 @@
 *.exe
 *.out
 *.app
+
+# Folders
+Debug/
+
+# Temprary
+*~
