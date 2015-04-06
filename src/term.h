@@ -120,8 +120,8 @@ namespace LEX{
 		{'<', SymbolClassMask::OPERATOR}
 	};
 
-	const map<char, LexValue> OperatorSymbolClassValue{
-		{'=', LexValue::ASS},
+	const map<const char*, LexValue> OperatorSymbolClassValue{
+		{':=', LexValue::ASS},
 		{'-', LexValue::SUB},
 		{'+', LexValue::ADD},
 		{'/', LexValue::DIV},
@@ -130,7 +130,7 @@ namespace LEX{
 		{'<', LexValue::LE}
 	};
 
-	const map<char, LexValue> DelimiterSymbolClassValue{
+	const map<const char*, LexValue> DelimiterSymbolClassValue{
 		{'(', LexValue::LBR},
 		{')', LexValue::RBR},
 		{'[', LexValue::LBRIND},
@@ -141,15 +141,22 @@ namespace LEX{
 		{'\'',LexValue::QUOT}
 	};
 
-	struct Term{
+	class Term{
 		char symbol;
 		SymbolClassMask classMask;
-		Term(const char& ch);
+	public:
+		Term(const char& i_ch);
 		inline bool isEndl() const{
 			return symbol == '\n';
 		}
-		inline bool isEOF() const{
-			return classMask == SymbolClassMask::_EOF;
+		inline bool isEOF() const{ //deprecated
+			return classMask & SymbolClassMask::_EOF;
+		}
+		inline bool is(const char& i_ch) const{
+			return symbol == i_ch;
+		}
+		inline bool is(const SymbolClassMask& i_class) const{
+			return classMask & i_class;
 		}
 		//operator char() const {return symbol;}
 		//operator SymbolClassMask() const {return classMask;}

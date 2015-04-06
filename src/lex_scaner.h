@@ -78,12 +78,12 @@ namespace LEX{
 		void readNextTerm(); // TODO: check if 'throw' needed
 		void machineBackStep(pos i_stepsNumber=1);
 
-		enum class AutomatInternalState: int{
+		enum {
 			q_START, q_WAIT_OCTAL, f_EXTRACT_INT, f_EXTRACT_STR,
 			q_INT_PART, q_FRAC_PART1, q_FRAC_PART2, q_MANTISSA1,
-			q_MANTISSA2, q_MANTISSA3, f_EXTRACT_REAL,
+			q_MANTISSA2, q_MANTISSA3, q_MANTISSA0, q_MANTISSA01, f_EXTRACT_REAL,
 			q_IDENT, f_EXTRACT_IDENT,
-			q_OP_ASSIGN, f_EXTRACT_OP_ASSIGN, f_EXTRACT_DELIMITER,
+			q_OP_ASSIGN, f_EXTRACT_DELIMITER,
 			f_EXTRACT_OP,
 			q_STR0, q_STR1, q_STR2, f_EXTRACT_ERROR,
 			q_COM0, q_COM1, q_COM2, q_COM3, f_EXTRACT_COM,
