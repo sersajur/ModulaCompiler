@@ -17,10 +17,11 @@ class TStringConveyor{
 	TStringConveyor* m_SourceConveyor;
 	bool m_UseStringAsASourceFlag;
 	bool m_ForwardPassFlag;
-	inline bool IsSourceAString()const { return m_UseStringAsASourceFlag; }
+	bool IsSourceAString()const { return m_UseStringAsASourceFlag; }
 protected:
-	inline bool IsPassAForward()const { return m_ForwardPassFlag; }
-
+	bool IsPassAForward()const { return m_ForwardPassFlag; }
+	char getSymbolFromSource();
+	void ungetSymbolToSource(char i_symbol);
 	virtual char ProcessSymbol(char i_Symbol);
 public:
 	TStringConveyor();

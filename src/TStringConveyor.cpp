@@ -15,26 +15,11 @@ m_UseStringAsASourceFlag(false), m_ForwardPassFlag(false){
 
 //TStringConveyor::~TStringConveyor(){ ;}
 char TStringConveyor::getSymbol(){
-	char o_ch;
-	if (IsSourceAString()){
-		o_ch = m_SourceString->c_str()[0];
-		if (m_SourceString->length())
-			m_SourceString->erase(m_SourceString->begin());
-	}
-	else
-		o_ch = m_SourceConveyor->getSymbol();
-	return ProcessSymbol(o_ch);
+	return ProcessSymbol(getSymbolFromSource());
 }
 /************************************************************************************/
 void TStringConveyor::ungetSymbol(char i_ch){
-	i_ch = ProcessSymbol(i_ch);
-	if (IsSourceAString()){
-		if (static_cast<int>(i_ch) != 0){
-			m_SourceString->insert(m_SourceString->begin(), i_ch);
-		}
-	}
-	else
-		m_SourceConveyor->ungetSymbol(i_ch);
+	ungetSymbolToSource(ProcessSymbol(i_ch));
 }
 /************************************************************************************/
 TStringConveyor& TStringConveyor::operator>>(string& i_DestinationString){
@@ -69,6 +54,28 @@ TStringConveyor& TStringConveyor::operator<<(TStringConveyor& io_StringConveyorU
 }
 /************************************************************************************/
 /* Protected: */
+char TStringConveyor::getSymbolFromSource(){
+	char o_symbol;
+	if (IsSourceAString()){
+		o_symbol = m_SourceString->c_str()[0];
+		if (m_SourceString->length())
+			m_SourceString->erase(m_SourceString->begin());
+		}
+	else
+		o_symbol = m_SourceConveyor->getSymbol();
+	return o_symbol;
+}
+/************************************************************************************/
+void TStringConveyor::ungetSymbolToSource(char i_symbol){
+	if (IsSourceAString()){
+		if (static_cast<int>(i_symbol) != 0){
+			m_SourceString->insert(m_SourceString->begin(), i_symbol);
+		}
+	}
+	else
+		m_SourceConveyor->ungetSymbol(i_symbol);
+}
+/************************************************************************************/
 char TStringConveyor::ProcessSymbol(char i_Symbol){
 	return i_Symbol;
 }
