@@ -34,9 +34,10 @@ class TFiniteStateMachine {
 			++m_symbolNumberAfterLastFinalState;
 		}
 	}
-	TFiniteStateMachine();
+
 public:
-	const int NoStepAfterFinalState = -1;
+	static const int NoStepAfterFinalState = -1;
+	TFiniteStateMachine();
 	TFiniteStateMachine(const N& i_startState, const set<N>& i_finalStates);
 	virtual ~TFiniteStateMachine();
 
@@ -58,7 +59,8 @@ public:
 
 template <class T, class N>
 TFiniteStateMachine<T, N>::TFiniteStateMachine():
-m_goodFlag{false}, m_symbolNumberAfterLastFinalState{NoStepAfterFinalState}{
+m_symbolNumberAfterLastFinalState{NoStepAfterFinalState},
+m_goodFlag{false}{
 
 }
 /************************************************************************************/

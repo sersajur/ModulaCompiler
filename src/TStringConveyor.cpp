@@ -15,11 +15,13 @@ m_UseStringAsASourceFlag(false), m_ForwardPassFlag(false){
 
 //TStringConveyor::~TStringConveyor(){ ;}
 char TStringConveyor::getSymbol(){
+	m_ForwardPassFlag = true;
 	return ProcessSymbol(getSymbolFromSource());
 }
 /************************************************************************************/
 void TStringConveyor::ungetSymbol(char i_ch){
-	ungetSymbolToSource(ProcessSymbol(i_ch));
+	m_ForwardPassFlag = false;
+	ungetToSource(ProcessSymbol(i_ch));
 }
 /************************************************************************************/
 TStringConveyor& TStringConveyor::operator>>(string& i_DestinationString){
@@ -66,7 +68,7 @@ char TStringConveyor::getSymbolFromSource(){
 	return o_symbol;
 }
 /************************************************************************************/
-void TStringConveyor::ungetSymbolToSource(char i_symbol){
+void TStringConveyor::ungetToSource(char i_symbol){
 	if (IsSourceAString()){
 		if (static_cast<int>(i_symbol) != 0){
 			m_SourceString->insert(m_SourceString->begin(), i_symbol);
@@ -74,6 +76,20 @@ void TStringConveyor::ungetSymbolToSource(char i_symbol){
 	}
 	else
 		m_SourceConveyor->ungetSymbol(i_symbol);
+}
+/************************************************************************************/
+void TStringConveyor::ungetToSource(string i_symbols){
+	while (!i_symbols.empty()){
+		ungetToSource(i_symbols.back());
+		i_symbols.pop_back();
+	}
+}
+/************************************************************************************/
+void TStringConveyor::ungetToSource(const std::string::iterator i_begin, const std::string::iterator i_end){
+	for (auto it = i_end - 1; it >= i_begin; --it){
+		ungetToSource(*it);
+	}
+
 }
 /************************************************************************************/
 char TStringConveyor::ProcessSymbol(char i_Symbol){

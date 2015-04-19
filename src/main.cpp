@@ -10,14 +10,47 @@
 #include <string>
 #include "TStringConveyor.h"
 #include "TFiniteStateMachine.h"
+#include "TPositionCounter.h"
 
 using namespace std;
 
 int main() {
-	string srcStr = "qwer((***)";
-	string destStr;
-	//TStringConveyor conveyor1, conveyor2, conveyor3;
 
+	enum States{
+		START, 	f_COLUMN,
+				f_LINE_LINUX,
+				f_LINE_IOS_OR_WINBEGIN,
+				f_LINE_WINDOWS
+	};
+	TFiniteStateMachine<char, States> fsm{START, {f_COLUMN, f_LINE_IOS_OR_WINBEGIN, f_LINE_LINUX, f_LINE_WINDOWS}};
+	fsm
+	(START, '\n', f_LINE_LINUX)
+	(START, '\r', f_LINE_IOS_OR_WINBEGIN)
+	(START, f_COLUMN)
+	(f_LINE_IOS_OR_WINBEGIN, '\n', f_LINE_WINDOWS);
+	TPositionCounter<States> posCounter;
+	posCounter = {fsm, {f_COLUMN}, {f_LINE_LINUX, f_LINE_IOS_OR_WINBEGIN, f_LINE_WINDOWS}};
+
+	string srcStr = "firstLine\nnewLinuxLine\rnewIOSLine\r\nnewWindowsLine";
+	srcStr >> posCounter;
+	string destStr;
+	while (!srcStr.empty()){
+		posCounter >> destStr;
+		cout 	<< posCounter.getPosition().line << ':'
+				<< posCounter.getPosition().column << '\t'
+				<< destStr.back() << '\t' << int(destStr.back()) << endl;
+	}
+	cout << "unget Test:\n";
+	while (!destStr.empty()){
+		cout 	<< posCounter.getPosition().line << ':'
+				<< posCounter.getPosition().column << '\t'
+				<< destStr.back() << endl;
+		posCounter << destStr;
+	}
+	cout << int('\r');
+
+	//TStringConveyor conveyor1, conveyor2, conveyor3;
+/*//For comments
 	enum States{
 		START,
 		f_NOCOMMENT,
@@ -35,11 +68,13 @@ int main() {
 	(COMMENT, '*', MAYBE_COMMENT_END)
 	(COMMENT, '*', COMMENT)
 	(MAYBE_COMMENT_END, ')', f_COMMENT_END);
-
+	bool one_more_step = true;
 	cout << bool(fsm) << endl;
-	while (!srcStr.empty()){
+	while (!srcStr.empty() || one_more_step){
+		if (srcStr.empty())
+			one_more_step = false;
 		unsigned i;
-		for (i = 0; i < srcStr.length() && fsm; i++){
+		for (i = 0; i < srcStr.length()+1 && fsm; i++){
 			cout << srcStr[i] << '\t' << ':' << fsm.Transit(srcStr[i]) << endl;
 		}
 		cout << "Last final states:\n";
@@ -55,11 +90,11 @@ int main() {
 	}
 	cout << "Steps after final state:" << endl;
 	cout << fsm.getSymbolNumberAfterLastFinalState() << endl;
-/*
-	srcStr >> conveyor1 >> conveyor2 >> conveyor3 >> destStr;
-	srcStr >> conveyor1 >> conveyor2 >> conveyor3 >> destStr;
-	srcStr >> conveyor1 >> conveyor2 >> conveyor3 >> destStr;
 */
+//	srcStr >> conveyor1 >> conveyor2 >> conveyor3 >> destStr;
+//	srcStr >> conveyor1 >> conveyor2 >> conveyor3 >> destStr;
+//	srcStr >> conveyor1 >> conveyor2 >> conveyor3 >> destStr;
+
 //	cout << srcStr << endl;
 //	cout << destStr << endl;
 	return 0;

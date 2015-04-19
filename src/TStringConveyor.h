@@ -21,7 +21,9 @@ class TStringConveyor{
 protected:
 	bool IsPassAForward()const { return m_ForwardPassFlag; }
 	char getSymbolFromSource();
-	void ungetSymbolToSource(char i_symbol);
+	void ungetToSource(char i_symbol);
+	void ungetToSource(string i_symbol);
+	void ungetToSource(const std::string::iterator i_begin, const std::string::iterator i_end);
 	virtual char ProcessSymbol(char i_Symbol);
 public:
 	TStringConveyor();
