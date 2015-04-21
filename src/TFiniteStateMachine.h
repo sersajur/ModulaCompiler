@@ -12,6 +12,8 @@
 #include <vector>
 #include <set>
 
+#include <iostream> //temp
+
 using std::vector;
 using std::multimap;
 using std::pair;
@@ -23,23 +25,29 @@ class TFiniteStateMachine {
 	N m_startState; // set only in constructor
 	multimap<pair<N, T>, N> m_transitions;
 	multimap<N, N> m_otherTransitions;
+	set<pair<N, T>> m_depricatedTransitions;
 
-	set<N> m_currentStates; //resetable
+	//resetable
+	set<N> m_currentStates;
 	set<N> m_lastFinalStates; //resetable
 	int m_symbolNumberAfterLastFinalState; //resetable
-	bool m_goodFlag; //unset when no transition was found, resetable
+	bool m_goodFlag; //set to false when no transition was found
 
 	void addOneMoreStepIfCounterUnlock(){
 		if (m_symbolNumberAfterLastFinalState != NoStepAfterFinalState){
 			++m_symbolNumberAfterLastFinalState;
 		}
 	}
-
+	bool IsTransitionAllowed(const N& i_state, const T& i_term){
+		return m_depricatedTransitions.find({i_state, i_term}) == m_depricatedTransitions.end();
+	}
 public:
-	static const int NoStepAfterFinalState = -1;
 	TFiniteStateMachine();
 	TFiniteStateMachine(const N& i_startState, const set<N>& i_finalStates);
 	virtual ~TFiniteStateMachine();
+
+	static const int NoStepAfterFinalState = -1;
+	static bool IsThereTargetState(const set<N>& i_source, const set<N>& i_target);
 
 	void setTransition(const N& i_currentState, const T& i_inputTerm, const N& i_nextState);
 	void setTransition(const N& i_currentState, const set<T>& i_inputTerm, const N& i_nextState);
@@ -50,13 +58,47 @@ public:
 	TFiniteStateMachine& operator()(const N& i_currentState, const set<T>& i_inputTerm, const N& i_nextState);
 	TFiniteStateMachine& operator()(const N& i_currentState, const N& i_nextState);
 	TFiniteStateMachine& operator()(const N& i_currentState, const set<N>& i_nextStates);
+	TFiniteStateMachine& except(const N& i_currentState, const T& i_inputTerm);
+
 	void Reset();
 	set<N> getLastFinalStates()const;
 	int getSymbolNumberAfterLastFinalState()const;
 	TFiniteStateMachine& Transit(const T& i_inputTerm);
-	operator bool(){ return m_goodFlag; }
+
+	// Check machine's meta states
+	bool IsMachineWork()const { return m_goodFlag; }
+	operator bool()const { return IsMachineWork(); }
+	bool IsMachineAccept()const {
+		return getSymbolNumberAfterLastFinalState() != NoStepAfterFinalState;
+	}
+
+	void Temp_printCurrentStates(){
+		using std::cout;
+		using std::endl;
+		for (const auto& it : m_currentStates)
+			cout << it << '\t';
+	}
+	void Temp_printFinalStates(){
+		using std::cout;
+		using std::endl;
+		for (const auto& it : m_lastFinalStates)
+			cout << it << '\t';
+	}
 };
 
+/************************************************************************************/
+template <class T, class N>
+bool TFiniteStateMachine<T,N>::IsThereTargetState(const set<N>& i_source, const set<N>& i_target){
+	bool  result = false;
+	for (const auto& it : i_target){
+		if (i_source.find(it) != i_source.end()){
+			result = true;
+			break;
+		}
+	}
+	return result;
+}
+/************************************************************************************/
 template <class T, class N>
 TFiniteStateMachine<T, N>::TFiniteStateMachine():
 m_symbolNumberAfterLastFinalState{NoStepAfterFinalState},
@@ -130,6 +172,12 @@ TFiniteStateMachine<T, N>& TFiniteStateMachine<T, N>::operator()(const N& i_curr
 }
 /************************************************************************************/
 template <class T, class N>
+TFiniteStateMachine<T, N>& TFiniteStateMachine<T, N>::except(const N& i_currentState, const T& i_inputTerm){
+	m_depricatedTransitions.insert({i_currentState, i_inputTerm});
+	return *this;
+}
+/************************************************************************************/
+template <class T, class N>
 void TFiniteStateMachine<T, N>::Reset(){
 	m_currentStates = {m_startState};
 	m_goodFlag = true;
@@ -149,7 +197,7 @@ int TFiniteStateMachine<T, N>::getSymbolNumberAfterLastFinalState()const{
 /************************************************************************************/
 template <class T, class N>
 TFiniteStateMachine<T,N>& TFiniteStateMachine<T, N>::Transit(const T& i_inputTerm){
-	/* Do nothing else passed symbol counting if transition has been failed once */
+	/* Do nothing else counting passed symbol if transition has been failed once */
 	if (!m_goodFlag){
 		addOneMoreStepIfCounterUnlock();
 		return *this;
@@ -158,6 +206,10 @@ TFiniteStateMachine<T,N>& TFiniteStateMachine<T, N>::Transit(const T& i_inputTer
 	/* Find transitions */
 	set<N> nextStates;
 	for (const auto& it_currentState : m_currentStates){
+
+		if (!IsTransitionAllowed(it_currentState, i_inputTerm))
+			continue;
+
 		const auto& pair_nextStateRange = m_transitions.equal_range(pair<N, T>(it_currentState, i_inputTerm));
 		if (pair_nextStateRange.first != pair_nextStateRange.second){ /* for transitions <N, T> -> N */
 			for (auto it = pair_nextStateRange.first; it != pair_nextStateRange.second; it++){

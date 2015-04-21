@@ -8,8 +8,10 @@
 #ifndef TSTRINGCONVEYOR_H_
 #define TSTRINGCONVEYOR_H_
 
+#include <vector>
 #include <string>
 
+using std::vector;
 using std::string;
 
 class TStringConveyor{
@@ -23,7 +25,7 @@ protected:
 	char getSymbolFromSource();
 	void ungetToSource(char i_symbol);
 	void ungetToSource(string i_symbol);
-	void ungetToSource(const std::string::iterator i_begin, const std::string::iterator i_end);
+	void ungetToSource(const vector<char>::iterator i_begin, const vector<char>::iterator i_end);
 	virtual char ProcessSymbol(char i_Symbol);
 public:
 	TStringConveyor();

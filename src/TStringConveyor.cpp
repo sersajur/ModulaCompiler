@@ -85,7 +85,7 @@ void TStringConveyor::ungetToSource(string i_symbols){
 	}
 }
 /************************************************************************************/
-void TStringConveyor::ungetToSource(const std::string::iterator i_begin, const std::string::iterator i_end){
+void TStringConveyor::ungetToSource(const vector<char>::iterator i_begin, const vector<char>::iterator i_end){
 	for (auto it = i_end - 1; it >= i_begin; --it){
 		ungetToSource(*it);
 	}
