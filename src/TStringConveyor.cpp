@@ -24,10 +24,9 @@ void TStringConveyor::ungetSymbol(char i_ch){
 	ungetToSource(ProcessSymbol(i_ch));
 }
 /************************************************************************************/
-TStringConveyor& TStringConveyor::operator>>(string& i_DestinationString){
+TStringConveyor& TStringConveyor::operator>>(vector<char>& i_DestinationVector){
 	char ch = getSymbol();
-	if (static_cast<int>(ch) != 0)
-		i_DestinationString.push_back(ch);
+	i_DestinationVector.push_back(ch);
 	return *this;
 }
 /************************************************************************************/
@@ -38,10 +37,10 @@ TStringConveyor& TStringConveyor::operator>>(TStringConveyor& io_StringConveyorU
 	return io_StringConveyorUser;
 }
 /************************************************************************************/
-TStringConveyor& TStringConveyor::operator<<(string& i_DestinationString){
-	if (i_DestinationString.length()){
-		ungetSymbol(i_DestinationString.back());
-		i_DestinationString.pop_back();
+TStringConveyor& TStringConveyor::operator<<(vector<char>& i_DestinationVector){
+	if (!i_DestinationVector.empty()){
+		ungetSymbol(i_DestinationVector.back());
+		i_DestinationVector.pop_back();
 	}
 	else
 		ungetSymbol(static_cast<char>(0));

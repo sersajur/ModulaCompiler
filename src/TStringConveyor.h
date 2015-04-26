@@ -31,14 +31,15 @@ public:
 	TStringConveyor();
 	virtual ~TStringConveyor(){ };
 
+	virtual operator bool() const {return true;}
 	char getSymbol();
 	void ungetSymbol(char i_ch);
 
-	TStringConveyor& operator>>(string& i_DestinationString);
+	TStringConveyor& operator>>(vector<char>& i_DestinationVector);
 	friend TStringConveyor& operator>>(string& i_SourceString, TStringConveyor& io_StringConveyor);
 	TStringConveyor& operator>>(TStringConveyor& io_StringConveyorUser);
 
-	TStringConveyor& operator<<(string& i_DestinationString);
+	TStringConveyor& operator<<(vector<char>& i_DestinationVector);
 	friend TStringConveyor& operator<<(string& i_SourceString, TStringConveyor& io_StringConveyor);
 	TStringConveyor& operator<<(TStringConveyor& io_StringConveyorUser);
 };
