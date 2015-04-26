@@ -42,12 +42,12 @@ class TFiniteStateMachine {
 		return m_depricatedTransitions.find({i_state, i_term}) == m_depricatedTransitions.end();
 	}
 public:
+	static const int NoStepAfterFinalState = -1;
+	static bool IsThereTargetState(const set<N>& i_source, const set<N>& i_target);
+
 	TFiniteStateMachine();
 	TFiniteStateMachine(const N& i_startState, const set<N>& i_finalStates);
 	virtual ~TFiniteStateMachine();
-
-	static const int NoStepAfterFinalState = -1;
-	static bool IsThereTargetState(const set<N>& i_source, const set<N>& i_target);
 
 	void setTransition(const N& i_currentState, const T& i_inputTerm, const N& i_nextState);
 	void setTransition(const N& i_currentState, const set<T>& i_inputTerm, const N& i_nextState);
@@ -59,16 +59,18 @@ public:
 	TFiniteStateMachine& operator()(const N& i_currentState, const N& i_nextState);
 	TFiniteStateMachine& operator()(const N& i_currentState, const set<N>& i_nextStates);
 	TFiniteStateMachine& except(const N& i_currentState, const T& i_inputTerm);
+	TFiniteStateMachine& except(const N& i_currentState, const set<T>& i_inputTerm);
 
 	void Reset();
+	TFiniteStateMachine& Transit(const T& i_inputTerm);
 	set<N> getLastFinalStates()const;
 	int getSymbolNumberAfterLastFinalState()const;
-	TFiniteStateMachine& Transit(const T& i_inputTerm);
 
 	// Check machine's meta states
-	bool IsMachineWork()const { return m_goodFlag; }
-	operator bool()const { return IsMachineWork(); }
-	bool IsMachineAccept()const {
+	bool IsMachineWork()const { return m_goodFlag; } 	// Check if previous transitions
+	operator bool()const { return IsMachineWork(); }	//	have been happened
+
+	bool IsMachineAccept()const { // Check if at least once final state has been matched
 		return getSymbolNumberAfterLastFinalState() != NoStepAfterFinalState;
 	}
 
@@ -76,13 +78,13 @@ public:
 		using std::cout;
 		using std::endl;
 		for (const auto& it : m_currentStates)
-			cout << it << '\t';
+			cout << int(it) << '\t';
 	}
 	void Temp_printFinalStates(){
 		using std::cout;
 		using std::endl;
 		for (const auto& it : m_lastFinalStates)
-			cout << it << '\t';
+			cout << int(it) << '\t';
 	}
 };
 
@@ -126,7 +128,7 @@ void TFiniteStateMachine<T, N>::setTransition(const N& i_currentState, const T& 
 template <class T, class N>
 void TFiniteStateMachine<T, N>::setTransition(const N& i_currentState, const set<T>& i_inputTerms, const N& i_nextState){
 	for (auto& it : i_inputTerms){
-		setTransition(i_currentState, *it, i_nextState);
+		setTransition(i_currentState, it, i_nextState);
 	}
 }
 /************************************************************************************/
@@ -174,6 +176,13 @@ TFiniteStateMachine<T, N>& TFiniteStateMachine<T, N>::operator()(const N& i_curr
 template <class T, class N>
 TFiniteStateMachine<T, N>& TFiniteStateMachine<T, N>::except(const N& i_currentState, const T& i_inputTerm){
 	m_depricatedTransitions.insert({i_currentState, i_inputTerm});
+	return *this;
+}
+/************************************************************************************/
+template <class T, class N>
+TFiniteStateMachine<T, N>& TFiniteStateMachine<T, N>::except(const N& i_currentState, const set<T>& i_inputTermVec){
+	for (const auto& it : i_inputTermVec)
+		m_depricatedTransitions.insert({i_currentState, it});
 	return *this;
 }
 /************************************************************************************/
