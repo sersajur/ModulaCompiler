@@ -25,9 +25,10 @@
 								<option id="gnu.cpp.compiler.option.debugging.level.1221661288" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.dialect.std.207449896" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.other.other.1440268734" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++0x" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.567843563" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+								<option id="gnu.cpp.compiler.option.preprocessor.def.567843563" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__GXX_EXPERIMENTAL_CXX0X__"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.preprocessor.preprocess.619069844" name="Preprocess only (-E)" superClass="gnu.cpp.compiler.option.preprocessor.preprocess" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1201476892" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1770830154" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
