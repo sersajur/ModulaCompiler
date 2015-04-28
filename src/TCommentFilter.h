@@ -11,6 +11,7 @@
 #include <set>
 
 #include "TStringConveyor.h"
+#include "TLexicalException.h"
 
 using std::set;
 
@@ -46,7 +47,7 @@ char TCommentFilter<N>::ProcessSymbol(char i_symbol){
 		}
 
 		if (!m_fsm.IsMachineAccept()){
-			throw "TCommentFilter: Finite state machine does not accept!";
+			throw TLexicalException("Undefined transition for TCommentFilter");
 		}
 
 		auto finalStates = m_fsm.getLastFinalStates();

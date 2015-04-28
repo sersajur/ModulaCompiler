@@ -14,6 +14,7 @@
 
 #include "TStringConveyor.h"
 #include "TFiniteStateMachine.h"
+#include "TLexicalException.h"
 
 using std::set;
 using std::pair;
@@ -70,7 +71,7 @@ char TPositionCounter<N>::ProcessSymbol(char i_symbol){
 		}
 
 		if (!m_fsm.IsMachineAccept()){
-			throw "TPositionCounter: Finite state machine does not accept!";
+			throw TLexicalException("Undefined transition for TPositionCounter");
 		}
 
 		// Change positions
@@ -96,7 +97,7 @@ char TPositionCounter<N>::ProcessSymbol(char i_symbol){
 		m_fsm.Transit(i_symbol);
 
 		if (!m_fsm.IsMachineAccept()){
-			throw "TPositionCounter: Finite state machine does not accept!";
+			throw TLexicalException("Undefined transition for TPositionCounter");
 		}
 
 		auto finalStates = m_fsm.getLastFinalStates();

@@ -22,7 +22,7 @@ using std::set;
 template <class T, class N>
 class TFiniteStateMachine {
 	set<N> m_possibleFinalStates; // ctor, setFinalStates(depricated)
-	N m_startState; // set only in constructor
+	N m_startState;
 	multimap<pair<N, T>, N> m_transitions;
 	multimap<N, N> m_otherTransitions;
 	set<pair<N, T>> m_depricatedTransitions;
@@ -49,11 +49,13 @@ public:
 	TFiniteStateMachine(const N& i_startState, const set<N>& i_finalStates);
 	virtual ~TFiniteStateMachine();
 
+	void setStartState(const N& i_startState);
+	void setFinalStates(const set<N>& i_finalStates);
 	void setTransition(const N& i_currentState, const T& i_inputTerm, const N& i_nextState);
 	void setTransition(const N& i_currentState, const set<T>& i_inputTerm, const N& i_nextState);
 	void setTransition(const N& i_currentState, const N& i_nextState);
 	void setTransition(const N& i_currentState, const set<N>& i_nextStates);
-	void setFinalStates(const set<N>& i_finalStates);
+
 	TFiniteStateMachine& operator()(const N& i_currentState, const T& i_inputTerm, const N& i_nextState);
 	TFiniteStateMachine& operator()(const N& i_currentState, const set<T>& i_inputTerm, const N& i_nextState);
 	TFiniteStateMachine& operator()(const N& i_currentState, const N& i_nextState);
@@ -142,6 +144,11 @@ void TFiniteStateMachine<T, N>::setTransition(const N& i_currentState, const set
 	for (auto& it : i_nextStates){
 		setTransition(i_currentState, *it);
 	}
+}
+/************************************************************************************/
+template <class T, class N>
+void TFiniteStateMachine<T, N>::setStartState(const N& i_startState){
+	m_startState = i_startState;
 }
 /************************************************************************************/
 template <class T, class N>
