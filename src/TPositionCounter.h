@@ -41,6 +41,8 @@ public:
 	void Reset();
 	const TPosition getPosition()const { return m_position; }
 private:
+	static const unsigned StartLineNumber = 1;
+	static const unsigned StartColumnNumber = 1;
 	virtual char ProcessSymbol(char i_Symbol) override;
 };
 
@@ -57,7 +59,7 @@ m_associatedWithLineChangeFinalStates{i_lineChangingStates}{
 template <class N>
 void TPositionCounter<N>::Reset(){
 	m_fsm.Reset();
-	m_position = {1, 0};
+	m_position = {StartLineNumber, StartColumnNumber};
 	m_lastLineColumnValue.clear();
 }
 /************************************************************************************/

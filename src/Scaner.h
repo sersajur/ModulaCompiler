@@ -14,7 +14,7 @@
 #include "TPositionCounter.h"
 #include "TCommentFilter.h"
 #include "TTokenExtractor.h"
-
+#include "TOneSymbolExtractor.h"
 
 using std::string;
 
@@ -33,6 +33,11 @@ private:
 		COMMENT,
 		MAYBE_COMMENT_END,
 		f_COMMENT_END
+	};
+	enum class TWhiteSpaceStates{
+		start,
+		f_not_white_space,
+		whitespace
 	};
 	enum class TTokenExtractState{
 		start,
@@ -96,6 +101,7 @@ private:
 	string m_srcString;
 	TPositionCounter<TCntStates> m_posCounter;
 	TCommentFilter<TCommentStates> m_commentFilter;
+	TOneSymbolExtractor<TWhiteSpaceStates> m_whiteSpaceFilter;
 	TTokenExtractor<TTokenExtractState> m_tokenExtractor;
 };
 

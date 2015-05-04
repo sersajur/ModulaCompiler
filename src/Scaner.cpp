@@ -66,6 +66,18 @@ void Scaner::Configurate(const string& i_inputStr){
 	};
 	m_commentFilter = commentFilter;
 
+	//For white space suppressing
+	m_whiteSpaceFilter.setStartState(TWhiteSpaceStates::start);
+	m_whiteSpaceFilter.setFinalStates(set<TWhiteSpaceStates>{TWhiteSpaceStates::f_not_white_space});
+	const set<char> WhiteSpaceSymbols{' ', '\n', '\t'};
+	m_whiteSpaceFilter
+	(TWhiteSpaceStates::start, WhiteSpaceSymbols, TWhiteSpaceStates::whitespace)
+	(TWhiteSpaceStates::start, TWhiteSpaceStates::f_not_white_space)
+	(TWhiteSpaceStates::whitespace, WhiteSpaceSymbols, TWhiteSpaceStates::whitespace)
+	(TWhiteSpaceStates::whitespace, TWhiteSpaceStates::f_not_white_space)
+	(TWhiteSpaceStates::f_not_white_space, TWhiteSpaceStates::f_not_white_space);
+	m_whiteSpaceFilter.Reset();
+
 	//For Token Extraction
 	m_tokenExtractor.setStartState(TTokenExtractState::start);
 	m_tokenExtractor.setFinalStates(
@@ -200,7 +212,7 @@ void Scaner::Configurate(const string& i_inputStr){
 	(TTokenExtractState::pre_int11, 'B', TTokenExtractState::f_intval);
 	m_tokenExtractor.Reset();
 
-	m_srcString >> m_posCounter >> m_commentFilter >> m_tokenExtractor;
+	m_srcString >> m_posCounter >> m_commentFilter >> m_whiteSpaceFilter >> m_tokenExtractor;
 }
 
 void Scaner::Reset(const string& i_inputStr){
@@ -214,7 +226,9 @@ TToken Scaner::getNextToken(){
 	auto pos = m_posCounter.getPosition();
 	try{
 
-		while(m_tokenExtractor >> destString);
+		do{
+			m_whiteSpaceFilter.Reset();
+		}while(m_tokenExtractor >> destString);
 
 		if (!m_tokenExtractor.IsMachineAccept())
 			throw TLexicalException("Can't find token matching target string");

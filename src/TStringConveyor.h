@@ -25,6 +25,7 @@ protected:
 	char getSymbolFromSource();
 	void ungetToSource(char i_symbol);
 	void ungetToSource(string i_symbol);
+	void ungetToSource(vector<char>& io_buf, int i_backStepNumber);
 	void ungetToSource(const vector<char>::iterator i_begin, const vector<char>::iterator i_end);
 	virtual char ProcessSymbol(char i_Symbol);
 public:

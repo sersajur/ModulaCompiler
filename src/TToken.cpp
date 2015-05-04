@@ -101,9 +101,10 @@ TToken::~TToken() {
 
 ostream& operator<<(ostream& i_os, const TToken& i_token){
 
+	string lexeme = ((i_token.m_class == TToken::TTokenClass::_eof) ? "" : i_token.m_lexeme);
 	i_os	<< i_token.m_pos.line << ':'
 			<< i_token.m_pos.column << '\t'
 			<< TToken::ClassString.find(i_token.m_class)->second << '\t'
-			<< i_token.m_lexeme;
+			<< lexeme;
 	return i_os;
 }

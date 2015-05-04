@@ -84,6 +84,13 @@ void TStringConveyor::ungetToSource(string i_symbols){
 	}
 }
 /************************************************************************************/
+void TStringConveyor::ungetToSource(vector<char>& io_buf, int i_backStepNumber){
+	for (; i_backStepNumber; i_backStepNumber--){
+		ungetToSource(io_buf.back());
+		io_buf.pop_back();
+	}
+}
+/************************************************************************************/
 void TStringConveyor::ungetToSource(const vector<char>::iterator i_begin, const vector<char>::iterator i_end){
 	for (auto it = i_end - 1; it >= i_begin; --it){
 		ungetToSource(*it);

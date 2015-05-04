@@ -20,7 +20,7 @@ using std::ifstream;
 using std::ofstream;
 using std::string;
 
-const char* OutFileName = "./out.txt";
+const char* DefaultOutFileName = "./out.txt";
 
 int main(int argn, const char* argv[]){
 	if (argn != 2){
@@ -43,7 +43,7 @@ int main(int argn, const char* argv[]){
 	Scaner scaner;
 	scaner.Configurate(fileStringContent);
 
-	ofstream outFile(OutFileName);
+	ofstream outFile(DefaultOutFileName);
 	try{
 		TToken token = scaner.getNextToken();
 		while (token.getClass() != TToken::TTokenClass::_eof){
