@@ -12,7 +12,6 @@
 
 #include "TToken.h"
 #include "TPositionCounter.h"
-#include "TCommentFilter.h"
 #include "TTokenExtractor.h"
 #include "TOneSymbolExtractor.h"
 
@@ -27,12 +26,9 @@ private:
 		f_LINE_WINDOWS
 	};
 	enum class TCommentStates{
-		START,
-		f_NOCOMMENT,
-		MAYBE_COMMENT_BEGIN,
-		COMMENT,
-		MAYBE_COMMENT_END,
-		f_COMMENT_END
+		start,
+		f_nocomment,
+		f_commentBegin1, comment, commentEnd1, commentEnd2
 	};
 	enum class TWhiteSpaceStates{
 		start,
@@ -100,7 +96,7 @@ private:
 	bool m_lastTokenExtracted;
 	string m_srcString;
 	TPositionCounter<TCntStates> m_posCounter;
-	TCommentFilter<TCommentStates> m_commentFilter;
+	TOneSymbolExtractor<TCommentStates> m_commentFilter;
 	TOneSymbolExtractor<TWhiteSpaceStates> m_whiteSpaceFilter;
 	TTokenExtractor<TTokenExtractState> m_tokenExtractor;
 };

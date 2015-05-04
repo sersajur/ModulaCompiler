@@ -1,5 +1,6 @@
-123'sfdv'
+123'sfdv' 
 234
 345
 f + 4;
-begin
+begin    
+e(*comment*)nd

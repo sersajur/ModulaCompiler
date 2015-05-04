@@ -46,27 +46,21 @@ void Scaner::Configurate(const string& i_inputStr){
 	m_posCounter = posCounter;
 
 	//For Comment Suppressing
-	TFiniteStateMachine<char, TCommentStates> fsmForComment{
-		TCommentStates::START,
-		{TCommentStates::f_NOCOMMENT, TCommentStates::f_COMMENT_END}
-	};
-	fsmForComment
-		(TCommentStates::START, '(', TCommentStates::MAYBE_COMMENT_BEGIN)
-		(TCommentStates::START, '(', TCommentStates::f_NOCOMMENT)
-		(TCommentStates::START, TCommentStates::f_NOCOMMENT)
-		(TCommentStates::MAYBE_COMMENT_BEGIN, '*', TCommentStates::COMMENT)
-		(TCommentStates::COMMENT, '*', TCommentStates::MAYBE_COMMENT_END)
-		(TCommentStates::COMMENT, TCommentStates::COMMENT).except(TCommentStates::COMMENT, '\0')
-		(TCommentStates::MAYBE_COMMENT_END, '*', TCommentStates::MAYBE_COMMENT_END)
-		(TCommentStates::MAYBE_COMMENT_END, ')', TCommentStates::f_COMMENT_END)
-		(TCommentStates::MAYBE_COMMENT_END, TCommentStates::COMMENT).except(TCommentStates::MAYBE_COMMENT_END, '\0');
-	TCommentFilter<TCommentStates> commentFilter{
-		fsmForComment,
-		{TCommentStates::f_COMMENT_END}
-	};
-	m_commentFilter = commentFilter;
+	m_commentFilter.setExtractCondition(TOneSymbolExtractor<TCommentStates>::TExtractCondition::LastFinalState);
+	m_commentFilter.setStartState(TCommentStates::start);
+	m_commentFilter.setFinalStates(set<TCommentStates>{TCommentStates::f_nocomment, TCommentStates::f_commentBegin1});
+	m_commentFilter
+	(TCommentStates::start, '(', TCommentStates::f_commentBegin1)
+	(TCommentStates::f_commentBegin1, '*', TCommentStates::comment)
+	(TCommentStates::comment, '*', TCommentStates::commentEnd1)
+	(TCommentStates::comment, TCommentStates::comment).except(TCommentStates::comment, '\0')
+	(TCommentStates::commentEnd1, ')', TCommentStates::commentEnd2)
+	(TCommentStates::commentEnd2, TCommentStates::f_nocomment)
+	(TCommentStates::start, TCommentStates::f_nocomment);
+	m_commentFilter.Reset();
 
 	//For white space suppressing
+	m_whiteSpaceFilter.setExtractCondition(TOneSymbolExtractor<TWhiteSpaceStates>::TExtractCondition::FirstFinalState);
 	m_whiteSpaceFilter.setStartState(TWhiteSpaceStates::start);
 	m_whiteSpaceFilter.setFinalStates(set<TWhiteSpaceStates>{TWhiteSpaceStates::f_not_white_space});
 	const set<char> WhiteSpaceSymbols{' ', '\n', '\t'};
@@ -226,9 +220,8 @@ TToken Scaner::getNextToken(){
 	auto pos = m_posCounter.getPosition();
 	try{
 
-		do{
-			m_whiteSpaceFilter.Reset();
-		}while(m_tokenExtractor >> destString);
+		m_whiteSpaceFilter.Reset();
+		while(m_tokenExtractor >> destString);
 
 		if (!m_tokenExtractor.IsMachineAccept())
 			throw TLexicalException("Can't find token matching target string");
