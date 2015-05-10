@@ -90,6 +90,8 @@ void Scaner::Configurate(const string& i_inputStr){
 		TTokenExtractState::f_ass,
 		TTokenExtractState::f_semicolom,
 		TTokenExtractState::f_colom,
+		TTokenExtractState::f_dot,
+		TTokenExtractState::f_comma,
 		TTokenExtractState::f_lbr,
 		TTokenExtractState::f_rbr,
 		TTokenExtractState::f_lbrind,
@@ -139,6 +141,8 @@ void Scaner::Configurate(const string& i_inputStr){
 	(TTokenExtractState::start, ')' , TTokenExtractState::f_rbr)
 	(TTokenExtractState::start, ':' , TTokenExtractState::f_colom)
 	(TTokenExtractState::start, ';' , TTokenExtractState::f_semicolom)
+	(TTokenExtractState::start, '.' , TTokenExtractState::f_dot)
+	(TTokenExtractState::start, ',' , TTokenExtractState::f_comma)
 	(TTokenExtractState::start, ':' , TTokenExtractState::pre_ass1)
 		(TTokenExtractState::pre_ass1, '=' , TTokenExtractState::f_ass)
 	(TTokenExtractState::start, '/' , TTokenExtractState::f_div)

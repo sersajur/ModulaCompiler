@@ -1,0 +1,9 @@
+Lexical analyze:
+1:1	module	module
+1:7	id	Main
+1:12	end	end
+3:3	id	Main
+3:8	dot	.
+3:9	eof	
+Syntax error:
+1:12 in 'end' <-- Unmatched token

@@ -1,6 +1,3 @@
-123'sfdv' 
-234
-345
-f + 4;
-begin    
-e(*comment*)nd
+module Main;
+(*comment*)
+end Main.

@@ -51,6 +51,8 @@ const  map<TToken::TTokenClass, string> TToken::ClassString{
 		CLASS_STRING(and),
 		CLASS_STRING(ass),
 		CLASS_STRING(semicolom),
+		CLASS_STRING(dot),
+		CLASS_STRING(comma),
 		CLASS_STRING(colom),
 		CLASS_STRING(lbr),
 		CLASS_STRING(rbr),

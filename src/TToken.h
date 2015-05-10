@@ -41,7 +41,8 @@ public:
 	/* delims */
 		_semicolom, /* ';' */
 		_colom, 	/* ':' */
-//		_DOT,		/* '.' */
+		_dot,		/* '.' */
+		_comma,
 //		_QUOT,		/* '   */
 		_lbr,		/* '(' */
 		_rbr, 		/* ')' */
@@ -105,6 +106,10 @@ public:
 	const TPosition getPosition()const { return m_pos; }
 
 	friend ostream& operator<<(ostream& i_os, const TToken& i_token);
+	//Debug
+	static string ClassToString(const TTokenClass& i_class){
+		return ClassString.find(i_class)->second;
+	}
 private:
 
 	TTokenClass m_class;

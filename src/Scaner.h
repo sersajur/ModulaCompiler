@@ -55,6 +55,8 @@ private:
 		f_ass, pre_ass1,
 		f_semicolom,
 		f_colom,
+		f_dot,
+		f_comma,
 		f_lbr,
 		f_rbr,
 		f_lbrind,
@@ -81,6 +83,8 @@ private:
 		MAKE_STATE_CLASS(rbr),
 		MAKE_STATE_CLASS(lbrind),
 		MAKE_STATE_CLASS(rbrind),
+		MAKE_STATE_CLASS(dot),
+		MAKE_STATE_CLASS(comma),
 		MAKE_STATE_CLASS(eof)
 	};
 

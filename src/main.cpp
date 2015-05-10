@@ -13,6 +13,8 @@
 #include "Scaner.h"
 #include "TToken.h"
 #include "TLexicalException.h"
+#include "Parser.h"
+#include "SyntaxException.h"
 
 using std::cout;
 using std::endl;
@@ -40,24 +42,38 @@ int main(int argn, const char* argv[]){
 	fstr.seekg(0, std::ios::beg);
 	fileStringContent.assign(std::istreambuf_iterator<char>(fstr),
 							 std::istreambuf_iterator<char>());
+
 	Scaner scaner;
 	scaner.Configurate(fileStringContent);
-
+	Parser parser;
+	parser.Configurate();
 	ofstream outFile(DefaultOutFileName);
 	try{
-		TToken token = scaner.getNextToken();
-		while (token.getClass() != TToken::TTokenClass::_eof){
-			outFile << token << endl;
-			token = scaner.getNextToken();
-		}
-		outFile << token << endl;
+		//Lexical analyze
+		vector<TToken> tokens;
+		do{
+			tokens.push_back(scaner.getNextToken());
+		}while (tokens.back().getClass() != TToken::TTokenClass::_eof);
+
+		outFile << "Lexical analyze:" << endl;
+		for (auto it = tokens.begin(); it != tokens.end(); it++)
+			outFile << *it << endl;
+		//Syntax analyze
+		tokens.pop_back();
+		parser.setInput(tokens);
+		parser.Parse();
+
 	}
 	catch(TLexicalException& e){
-		cout << "Lexical error:" << endl;
-		cout << e.what() << endl;
+		outFile << "Lexical error:" << endl;
+		outFile << e.what() << endl;
+	}
+	catch(SyntaxException& e){
+		outFile << "Syntax error:" << endl;
+		outFile << e.what() << endl;
 	}
 	catch(...){
-		cout << "Unknown error occurred while compile" << endl;
+		outFile << "Unknown error occurred while compile" << endl;
 	}
 
 	return 0;
