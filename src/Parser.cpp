@@ -23,76 +23,100 @@ Parser::~Parser() {
 
 void Parser::Configurate(){
 	m_ruleBase = "program";
-
-	m_rules.insert(TRule("program", 		{"module", TToken::TTokenClass::_dot}));
-	m_rules.insert(TRule("module", 		  	{"moduleheading", "block", TToken::TTokenClass::_id}));
-	m_rules.insert(TRule("moduleheading", 	{TToken::TTokenClass::_module, TToken::TTokenClass::_id, TToken::TTokenClass::_semicolom}));
-	m_rules.insert(TRule("block", 			{TToken::TTokenClass::_end}));
-	m_rules.insert(TRule("block", 			{"statementpart", TToken::TTokenClass::_end}));
-	m_rules.insert(TRule("statementpart", 	{TToken::TTokenClass::_begin, "statementsequence"}));
-	m_rules.insert(TRule("statementsequence",{"statement", "fctstatement"}));
-	m_rules.insert(TRule("statement", 		{"assignment"}));
-	m_rules.insert(TRule("assignment", 		{"variable", TToken::TTokenClass::_ass, "expression"}));
-	m_rules.insert(TRule("variable", 		{TToken::TTokenClass::_id}));
-	m_rules.insert(TRule("expression", 		{TToken::TTokenClass::_intval}));
-	m_rules.insert(TRule("fctstatement",	{TToken::TTokenClass::_semicolom, "statementsequence"}));
-	m_rules.insert(TRule("fctstatement",	{}));
+	setRule
+	(1, "program", 			{"module", TToken::TTokenClass::_dot})
+	(2, "module", 		  	{"moduleheading", "block", TToken::TTokenClass::_id})
+	(3, "moduleheading", 	{TToken::TTokenClass::_module, TToken::TTokenClass::_id, TToken::TTokenClass::_semicolom})
+	(4, "block", 			{TToken::TTokenClass::_end})
+	(5, "block", 			{"statementpart", TToken::TTokenClass::_end})
+	(6, "statementpart", 	{TToken::TTokenClass::_begin, "statementsequence"})
+	(7, "statementsequence",{"statement", "fctstatement"})
+	(8, "statement", 		{"assignment"})
+	(9, "assignment", 		{"variable", TToken::TTokenClass::_ass, "expression"})
+	(10, "variable", 		{TToken::TTokenClass::_id})
+	(11, "expression", 		{TToken::TTokenClass::_intval})
+	(12, "fctstatement",	{TToken::TTokenClass::_semicolom, "statementsequence"})
+	(13, "fctstatement",	{});
 
 }
 void Parser::setInput(const vector<TToken>& i_input){
 	m_input = i_input;
 }
-void  Parser::Parse(){
-	m_unrecognizedTerminal = m_currentInputTerminal = m_input.begin();
+Parser& Parser::setRule(const Rule::TRuleNumber i_num, const TSyntaxRuleAtom& i_leftPart, const vector<TSyntaxRuleAtom>& i_rightPart){
+	m_rules.insert(static_cast<TRulePair>(Rule{i_num, i_leftPart, i_rightPart}));
+	return *this;
+}
+Parser& Parser::operator()(const Rule::TRuleNumber i_num, const TSyntaxRuleAtom& i_leftPart, const vector<TSyntaxRuleAtom>& i_righPart){
+	return setRule(i_num, i_leftPart, i_righPart);
+}
+Parser::ParseTree  Parser::Parse(){
+	m_currentInputTerminal = m_input.begin();
+	ParseTree o_parseTree;
 
-	if (!Parse(m_ruleBase))
+	if (!Parse(m_ruleBase, o_parseTree))
 		throw SyntaxException(*m_currentInputTerminal, "Unmatched token");
 
 	if ((m_currentInputTerminal != m_input.end()))
 		throw SyntaxException(*m_currentInputTerminal, "Non-empty rest of tokens started from");
-
+	return o_parseTree;
 }
-
-bool Parser::Parse(const TSyntaxRuleAtom i_syntaxAtom){
-
+bool Parser::Parse(const TSyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 	if (i_syntaxAtom.IsTerminal()){
-		std::cout << TToken::ClassToString(i_syntaxAtom.getTerminal()) << endl;
 		return CheckNextTerminal(i_syntaxAtom.getTerminal());
 	}
-	std::cout << "BEFORE: ";
-	std::cout << i_syntaxAtom.getNterminal() << endl;
-	bool isLambda = false;
-	bool result = false;
-	auto matchedRules = m_rules.equal_range(i_syntaxAtom);
+
+	Rule matchedRule;
+	vector<ParseTree> childNodes;
 	auto savedCurrentPosition = m_currentInputTerminal;
-	for (auto itRule = matchedRules.first; itRule != matchedRules.second; itRule++){ // Loop possible rules
-		bool oneRuleResult = true;
-		isLambda = true;
-		m_currentInputTerminal = savedCurrentPosition;
-		for (auto itSyntaxAtom = itRule->second.begin(); itSyntaxAtom != itRule->second.end(); itSyntaxAtom++){ //Loop right rule part
-			isLambda = false;
-			if (!(oneRuleResult = Parse(*itSyntaxAtom)))
-				break;
+	auto rulePairCandidates = m_rules.equal_range(i_syntaxAtom);
+	for (auto itRulePair = rulePairCandidates.first; itRulePair != rulePairCandidates.second; itRulePair++){ // Loop possible rules
+
+		const auto currentRule = itRulePair->second;
+		if (currentRule.IsLambda() && !matchedRule.IsInit()){
+			matchedRule = currentRule;
+			continue;
 		}
-		if ((result = oneRuleResult))
+
+		bool isRuleParsed = false;
+		m_currentInputTerminal = savedCurrentPosition;
+		for (auto& syntaxAtom : currentRule.getRightPart()){ //Loop right rule part
+			ParseTree childTree;
+			if (!(isRuleParsed = Parse(syntaxAtom, childTree))){
+				childNodes.clear();
+				break;
+			}
+			if (!syntaxAtom.IsTerminal())
+				childNodes.push_back(childTree);
+		}
+		if (isRuleParsed){
+			matchedRule = currentRule;
 			break;
+		}
 	}
-	std::cout << "AFTER: ";
-	std::cout << i_syntaxAtom.getNterminal() << endl;
-	return result || isLambda;
+	if (matchedRule.IsInit()){
+		o_parseTree.rule = matchedRule;
+		o_parseTree.childRules = childNodes;
+	}
+	return matchedRule.IsInit();
 }
 bool Parser::CheckNextTerminal(const TToken::TTokenClass& i_tokenClassToBeCompared){
 	if (m_currentInputTerminal == m_input.end())
 		return false;
 
-	std::cout << "DEBUG: terminal comparing:\t";
-	//std::cout << *m_currentInputTerminal << endl;
 	bool isEqual = (m_currentInputTerminal->getClass() == i_tokenClassToBeCompared);
 	if (isEqual){
-		std::cout << *m_currentInputTerminal << endl;
 		m_currentInputTerminal++;
-		m_unrecognizedTerminal = ((m_unrecognizedTerminal < m_currentInputTerminal) ? m_currentInputTerminal : m_unrecognizedTerminal);
 	}
 
 	return isEqual;
+}
+void Parser::PrintTree(ostream& i_os, const ParseTree& i_parseTree){
+	Parser::PrintTree(i_os, i_parseTree, 0);
+}
+void Parser::PrintTree(ostream& i_os, const ParseTree& i_parseTree, unsigned i_marginNum){
+	for (auto counter = i_marginNum; counter > 0; counter--)
+		i_os << '\t';
+	i_os << i_parseTree.rule << endl;
+	for (auto& it : i_parseTree.childRules)
+		Parser::PrintTree(i_os, it, ++i_marginNum);
 }

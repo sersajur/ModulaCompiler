@@ -61,8 +61,9 @@ int main(int argn, const char* argv[]){
 		//Syntax analyze
 		tokens.pop_back();
 		parser.setInput(tokens);
-		parser.Parse();
-
+		Parser::ParseTree parseTree = parser.Parse();
+		outFile << "Syntax analyze:" << endl;
+		Parser::PrintTree(outFile, parseTree);
 	}
 	catch(TLexicalException& e){
 		outFile << "Lexical error:" << endl;

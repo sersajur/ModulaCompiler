@@ -9,10 +9,12 @@
 #define TSYNTAXRULEATOM_H_
 
 #include <string>
+#include <iostream>
 
 #include "TToken.h"
 
 using std::string;
+using std::ostream;
 
 class TSyntaxRuleAtom {
 private:
@@ -33,6 +35,8 @@ public:
 	bool IsTerminal() const {return m_isTerminalFlag;}
 	TToken::TTokenClass getTerminal() const {return m_terminal;}
 	string getNterminal() const {return m_nterminal;}
+
+	friend ostream& operator<<(ostream& io_os, const TSyntaxRuleAtom& i_synAtom);
 };
 
 #endif /* TSYNTAXRULEATOM_H_ */

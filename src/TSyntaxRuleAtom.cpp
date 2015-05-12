@@ -42,3 +42,10 @@ m_terminal{i_token.getClass()}{
 bool TSyntaxRuleAtom::operator<(const TSyntaxRuleAtom& i_rOperand)const{
 	return this->getNterminal() < i_rOperand.getNterminal();
 }
+ostream& operator<<(ostream& io_os, const TSyntaxRuleAtom& i_synAtom){
+	if (i_synAtom.IsTerminal())
+		io_os << TToken::ClassToString(i_synAtom.getTerminal());
+	else if (!i_synAtom.getNterminal().empty())
+			io_os << '<' << i_synAtom.getNterminal() << '>';
+	return io_os;
+}
