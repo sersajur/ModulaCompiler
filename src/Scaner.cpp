@@ -15,7 +15,7 @@
 using std::vector;
 
 Scaner::Scaner():
-m_lastTokenExtracted(false){
+m_lastTokenExtracted{false}{
 
 }
 
@@ -220,7 +220,7 @@ void Scaner::Reset(const string& i_inputStr){
 }
 
 TToken Scaner::getNextToken(){
-	vector<char> destString;
+	vector<char> destString{};
 	auto pos = m_posCounter.getPosition();
 	try{
 

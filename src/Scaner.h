@@ -17,6 +17,7 @@
 
 using std::string;
 
+
 class Scaner {
 private:
 	enum class TCntStates{

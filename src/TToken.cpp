@@ -23,14 +23,15 @@ const  map<string, TToken::TTokenClass> TToken::ReservedWords{
 		RESERVED_WORD(char),
 		RESERVED_WORD(array),
 		RESERVED_WORD(of),
-		RESERVED_WORD(false),
-		RESERVED_WORD(true),
+		{"false", TToken::TTokenClass::_boolval},
+		{"true",  TToken::TTokenClass::_boolval},
 		RESERVED_WORD(module),
 		RESERVED_WORD(define),
 		RESERVED_WORD(use),
 		RESERVED_WORD(for),
 		RESERVED_WORD(or),
-		RESERVED_WORD(and)
+		RESERVED_WORD(and),
+		RESERVED_WORD(procedure)
 };
 
 #define CLASS_STRING(x) {TTokenClass::_ ## x, #x}
@@ -58,8 +59,8 @@ const  map<TToken::TTokenClass, string> TToken::ClassString{
 		CLASS_STRING(rbr),
 		CLASS_STRING(lbrind),
 		CLASS_STRING(rbrind),
-		CLASS_STRING(false),
-		CLASS_STRING(true),
+//		CLASS_STRING(false),
+//		CLASS_STRING(true),
 		CLASS_STRING(begin),
 		CLASS_STRING(end),
 		CLASS_STRING(if),
@@ -78,6 +79,7 @@ const  map<TToken::TTokenClass, string> TToken::ClassString{
 		CLASS_STRING(define),
 		CLASS_STRING(use),
 		CLASS_STRING(for),
+		CLASS_STRING(procedure),
 		CLASS_STRING(eof)
 };
 TToken::TToken():

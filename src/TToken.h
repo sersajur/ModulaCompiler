@@ -49,8 +49,8 @@ public:
 		_lbrind,	/* '[' */
 		_rbrind, 	/* ']' */
 	/* boolean constants */
-		_false, 	// reserved
-		_true,		// reserved
+//		_false, 	// reserved
+//		_true,		// reserved
 	/* statement words */
 		_begin,		// reserved
 		_end,		// reserved
@@ -70,6 +70,7 @@ public:
 		_define,	// reserved
 		_use,		// reserved
 		_for,		// reserved
+		_procedure, // reserved
 	/* EOF */
 		_eof 	/* '\0' for scanner and '$' for parser */
 	};

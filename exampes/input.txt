@@ -1,3 +1,5 @@
-module Main; 
-(*comment*)
-end Main.
+(*module Main; 
+
+begin*)
+	g:=a
+(*end Main.*)

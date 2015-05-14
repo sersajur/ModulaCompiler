@@ -36,21 +36,21 @@ int main(int argn, const char* argv[]){
 		return 1;
 	}
 
-	string fileStringContent;
+	string fileStringContent{};
 	fstr.seekg(0, std::ios::end);
 	fileStringContent.reserve(fstr.tellg());
 	fstr.seekg(0, std::ios::beg);
 	fileStringContent.assign(std::istreambuf_iterator<char>(fstr),
 							 std::istreambuf_iterator<char>());
 
-	Scaner scaner;
+	Scaner scaner{};
 	scaner.Configurate(fileStringContent);
-	Parser parser;
+	Parser parser{};
 	parser.Configurate();
 	ofstream outFile(DefaultOutFileName);
 	try{
 		//Lexical analyze
-		vector<TToken> tokens;
+		vector<TToken> tokens{};
 		do{
 			tokens.push_back(scaner.getNextToken());
 		}while (tokens.back().getClass() != TToken::TTokenClass::_eof);

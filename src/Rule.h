@@ -20,6 +20,7 @@ using std::ostream;
 class Rule {
 public:
 	typedef unsigned TRuleNumber;
+	typedef vector<TSyntaxRuleAtom> TRightPart;
 
 	Rule():
 		m_isInit{false}, m_number{0}
@@ -27,7 +28,7 @@ public:
 	Rule(TRuleNumber i_num, const TSyntaxRuleAtom& i_leftPart, const vector<TSyntaxRuleAtom>& i_rightPart);
 	virtual ~Rule();
 	operator pair<TSyntaxRuleAtom, Rule>();
-	vector<TSyntaxRuleAtom> getRightPart()const {return m_rightPart;}
+	TRightPart getRightPart()const {return m_rightPart;}
 	bool IsInit()const {return m_isInit;}
 	bool IsLambda() const {return m_isInit && m_rightPart.empty();}
 	friend ostream& operator<<(ostream& io_os, const Rule& i_rule);
@@ -35,7 +36,7 @@ private:
 	bool m_isInit;
 	TRuleNumber m_number;
 	TSyntaxRuleAtom m_leftPart;
-	vector<TSyntaxRuleAtom> m_rightPart;
+	TRightPart m_rightPart;
 };
 
 #endif /* RULE_H_ */

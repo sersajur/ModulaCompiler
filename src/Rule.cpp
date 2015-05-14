@@ -23,6 +23,8 @@ Rule::operator pair<TSyntaxRuleAtom, Rule>(){
 ostream& operator<<(ostream& io_os, const Rule& i_rule){
 	io_os << i_rule.m_number << ": "
 		  << i_rule.m_leftPart  << "::=";
+	if (i_rule.m_rightPart.empty())
+		io_os << "Lambda";
 	for (auto& it: i_rule.m_rightPart)
 		io_os << it << ' ';
 	return io_os;
