@@ -203,8 +203,7 @@ void Parser::Configurate(){
 	(nIndexRange, {nConstant, tColom, nConstant})
 	(nVariableDecalration, {nIdentList, tColom, nType})
 	(nProcedureDeclaration,{tProcedure, tId, nProcedureDeclaration1})
-	(nProcedureDeclaration1, {nBlock, tId})
-	(nProcedureDeclaration1, {nMbResultType, nBlock, tId})
+	(nProcedureDeclaration1, {nMbProcedureBody})
 	(nProcedureDeclaration1, {nMbFormalparameters, nMbProcedureBody})
 	(nMbProcedureBody,   {nBlock, tId})
 	(nMbProcedureBody,   {nMbResultType, nBlock, tId})
@@ -215,7 +214,7 @@ void Parser::Configurate(){
 	(nFormalParameters,{nSection, nSection1})
 	(nSection1, {tSemicolom, nFormalParameters})
 	(nSection1, {})
-	(nSection,  {tId, tColom, nFormalType})
+	(nSection,  {nIdentList, tColom, nFormalType})
 	(nSection,  {nMbSpec, nIdentList, tColom, nFormalType})
 	(nMbSpec,   {tConst})
 	(nMbSpec,   {tVar})
@@ -352,8 +351,8 @@ bool Parser::Parse(const TSyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 		o_parseTree.childRules = childNodes;
 	}
 
-
-	cout << "##########################################################" <<endl;
+//Debug:
+	cout << "##########################################################" << endl;
 	cout << "Current terminal: " ;
 	if (savedCurrentPosition!=m_input.end())
 		cout << *savedCurrentPosition << endl;
@@ -368,7 +367,7 @@ bool Parser::Parse(const TSyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 		cout << matchedRule << endl;
 	else
 		cout << "none" <<endl;
-
+//
 	return matchedRule.IsInit();
 }
 bool Parser::CheckNextTerminal(const TToken::TTokenClass& i_tokenClassToBeCompared){
