@@ -253,8 +253,8 @@ void Parser::Configurate(){
 	(nTermMul1, {})
 	(nMbMultiplication, {nMulOperator, nFactor, nTermMul1})
 	(nFactor, {nUnsignedConstant})
-	(nFactor, {nVariable})
 	(nFactor, {nFunctionCall})
+	(nFactor, {nVariable})
 	(nFactor, {tLPar, nExpression, tRPar})
 	(nFunctionCall, {tId, nParameterlist})
 	(nParameterlist,{tLPar, nParameters1, tRPar})
@@ -295,12 +295,16 @@ void Parser::setInput(const vector<TToken>& i_input){
 Parser::ParseTree  Parser::Parse(){
 	m_firstUnrecognized = m_currentInputTerminal = m_input.begin();
 	ParseTree o_parseTree{};
+	bool o_parseResult{Parse(m_grammar.getRuleBase(), o_parseTree)};
 
-	if (!Parse(m_grammar.getRuleBase(), o_parseTree))
-		throw SyntaxException(*m_currentInputTerminal, "Unexpected token class");
+	if (m_firstUnrecognized != m_input.end())
+		throw SyntaxException(*m_firstUnrecognized, "Unexpected token class");
 
 	if ((m_currentInputTerminal != m_input.end()))
-		throw SyntaxException(*m_currentInputTerminal, "Non-empty rest of tokens started from");
+		throw SyntaxException(*m_currentInputTerminal, "Non-empty rest of tokens started from this one");
+
+	if (!o_parseResult)
+		throw SyntaxException(*m_currentInputTerminal, "There is no matched rules for tokens after this one");
 	return o_parseTree;
 }
 Parser::ParseTree Parser::Parse(const vector<TToken>& i_input){
@@ -339,8 +343,8 @@ bool Parser::Parse(const TSyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 		}
 	}
 
-	if (/*!matchedRule.IsInit()  ||*/ matchedRule.IsLambda()){
-		m_currentInputTerminal = savedCurrentPosition;  // omg.. It was not obvious. But now it fixed! :)
+	if (matchedRule.IsLambda()){
+		m_currentInputTerminal = savedCurrentPosition;
 	}
 
 	if (matchedRule.IsInit()){
