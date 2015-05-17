@@ -1,5 +1,11 @@
-(*module Main; 
-
-begin*)
-	g:=a
-(*end Main.*)
+module Main; 
+	var g, f: integer;
+	const a = 6;
+begin
+	if (a < 7) then
+		g:=a*(a+a)/a < a;
+		f:=a
+	else
+		g:=false
+	end
+end Main.

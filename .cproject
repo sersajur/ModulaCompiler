@@ -119,16 +119,13 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1146575638;cdt.managedbuild.config.gnu.exe.debug.1146575638.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.1386669294;cdt.managedbuild.tool.gnu.cpp.compiler.input.625068997">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1146575638;cdt.managedbuild.config.gnu.exe.debug.1146575638.;cdt.managedbuild.tool.gnu.cross.c.compiler.583827594;cdt.managedbuild.tool.gnu.c.compiler.input.2114455067">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1146575638;cdt.managedbuild.config.gnu.exe.debug.1146575638.;cdt.managedbuild.tool.gnu.c.compiler.base.1770830154;cdt.managedbuild.tool.gnu.c.compiler.input.2077025311">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.502665888;cdt.managedbuild.config.gnu.exe.release.502665888.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.1232836195;cdt.managedbuild.tool.gnu.c.compiler.input.1669491647">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1146575638;cdt.managedbuild.config.gnu.exe.debug.1146575638.;cdt.managedbuild.tool.gnu.cpp.compiler.base.1597157968;cdt.managedbuild.tool.gnu.cpp.compiler.input.876245322">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1146575638;cdt.managedbuild.config.gnu.exe.debug.1146575638.;cdt.managedbuild.tool.gnu.cpp.compiler.base.1597157968;cdt.managedbuild.tool.gnu.cpp.compiler.input.876245322">
+		<scannerConfigBuildInfo instanceId="gcov;gcov.;cdt.managedbuild.tool.gnu.c.compiler.base.1341155537;cdt.managedbuild.tool.gnu.c.compiler.input.2132069785">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1146575638;cdt.managedbuild.config.gnu.exe.debug.1146575638.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.546280492;cdt.managedbuild.tool.gnu.cpp.compiler.input.1301876357">
@@ -138,6 +135,15 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1146575638;cdt.managedbuild.config.gnu.exe.debug.1146575638.;cdt.managedbuild.tool.gnu.c.compiler.exe.debug.1764190930;cdt.managedbuild.tool.gnu.c.compiler.input.709969941">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.debug.1146575638;cdt.managedbuild.config.gnu.exe.debug.1146575638.;cdt.managedbuild.tool.gnu.cross.c.compiler.583827594;cdt.managedbuild.tool.gnu.c.compiler.input.2114455067">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.502665888;cdt.managedbuild.config.gnu.exe.release.502665888.;cdt.managedbuild.tool.gnu.c.compiler.exe.release.1232836195;cdt.managedbuild.tool.gnu.c.compiler.input.1669491647">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="gcov;gcov.;cdt.managedbuild.tool.gnu.cpp.compiler.base.623385599;cdt.managedbuild.tool.gnu.cpp.compiler.input.1682105785">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.exe.release.502665888;cdt.managedbuild.config.gnu.exe.release.502665888.;cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.2040984599;cdt.managedbuild.tool.gnu.cpp.compiler.input.1325581683">

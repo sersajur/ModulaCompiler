@@ -148,7 +148,7 @@ void Parser::Configurate(){
 		tValBool{TToken::TTokenClass::_boolval},
 		tId{TToken::TTokenClass::_id};
 
-	m_grammar = SyntaxGrammar{nStatement};
+	m_grammar = SyntaxGrammar{nProgram};
 	m_grammar
 	(nProgram, 			{nModule, tDot})
 	(nModule, 		  	{nModuleHeading, nBlock,tId})
@@ -241,7 +241,7 @@ void Parser::Configurate(){
 	(nSimpleExpression1, {nMbRelation})
 	(nSimpleExpression1, {})
 	(nMbRelation, {nRelation, nSimpleExpression})
-	(nSimpleExpression, {nTerm, nMbAddition})
+	(nSimpleExpression, {nTerm, nTermAdd})
 	(nSimpleExpression, {nMbSign, nTerm, nTermAdd})
 	(nTermAdd, {nMbAddition})
 	(nTermAdd, {})
@@ -288,8 +288,6 @@ void Parser::Configurate(){
 	(nMbElsifs2, {})
 	(nMbElse,    {tElse, nStatementSequence})
 	(nForStatement, {tFor, nVariable, tEq, nExpression, tColom, nExpression, nStatementSequence, tEnd});
-
-
 }
 void Parser::setInput(const vector<TToken>& i_input){
 	m_input = i_input;
@@ -299,7 +297,7 @@ Parser::ParseTree  Parser::Parse(){
 	ParseTree o_parseTree{};
 
 	if (!Parse(m_grammar.getRuleBase(), o_parseTree))
-		throw SyntaxException(*m_firstUnrecognized, "Unexpected token class");
+		throw SyntaxException(*m_currentInputTerminal, "Unexpected token class");
 
 	if ((m_currentInputTerminal != m_input.end()))
 		throw SyntaxException(*m_currentInputTerminal, "Non-empty rest of tokens started from");
@@ -319,7 +317,6 @@ bool Parser::Parse(const TSyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 	auto savedCurrentPosition = m_currentInputTerminal;
 	auto ruleCandidates = m_grammar.getMatchedRules(i_syntaxAtom);
 	for (auto& currentRule : ruleCandidates){ // Loop possible rules
-
 		if (currentRule.IsLambda() && !matchedRule.IsInit()){
 			matchedRule = currentRule;
 			continue;
@@ -342,7 +339,7 @@ bool Parser::Parse(const TSyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 		}
 	}
 
-	if (!matchedRule.IsInit() /*|| matchedRule.IsLambda()*/){
+	if (/*!matchedRule.IsInit()  ||*/ matchedRule.IsLambda()){
 		m_currentInputTerminal = savedCurrentPosition;  // omg.. It was not obvious. But now it fixed! :)
 	}
 
@@ -373,8 +370,7 @@ bool Parser::Parse(const TSyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 bool Parser::CheckNextTerminal(const TToken::TTokenClass& i_tokenClassToBeCompared){
 	if (m_currentInputTerminal == m_input.end())
 		return false;
-//
-//	cout << TSyntaxRuleAtom(i_tokenClassToBeCompared) << " vs " << TSyntaxRuleAtom(m_currentInputTerminal->getClass())<< endl;
+
 	bool isEqual{m_currentInputTerminal->getClass() == i_tokenClassToBeCompared};
 	if (isEqual){
 		m_currentInputTerminal++;
