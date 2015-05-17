@@ -54,7 +54,9 @@ void Scaner::Configurate(const string& i_inputStr){
 	(TCommentStates::f_commentBegin1, '*', TCommentStates::comment)
 	(TCommentStates::comment, '*', TCommentStates::commentEnd1)
 	(TCommentStates::comment, TCommentStates::comment).except(TCommentStates::comment, '\0')
+	(TCommentStates::commentEnd1, '*', TCommentStates::commentEnd1)
 	(TCommentStates::commentEnd1, ')', TCommentStates::commentEnd2)
+	(TCommentStates::commentEnd1, TCommentStates::comment)
 	(TCommentStates::commentEnd2, TCommentStates::f_nocomment)
 	(TCommentStates::start, TCommentStates::f_nocomment);
 	m_commentFilter.Reset();
