@@ -1,0 +1,5 @@
+module Main; 
+  var f: integer
+begin
+  f := 5*g
+end Main.
