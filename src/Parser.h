@@ -16,13 +16,9 @@
 #include "SyntaxRuleAtom.h"
 #include "Rule.h"
 #include "SyntaxGrammar.h"
+#include "ParseTree.h"
 
 class Parser {
-public:
-	struct ParseTree{
-		Rule rule;
-		vector<ParseTree>  childRules;
-	};
 private:
 	SyntaxGrammar m_grammar;
 	vector<TToken> m_input;
@@ -31,7 +27,7 @@ private:
 
 	bool CheckNextTerminal(const TToken::TTokenClass& i_tokenClassToBeCompared);
 	bool Parse(const SyntaxRuleAtom i_ruleAtom, ParseTree& io_pareTree);
-	static void PrintTree(ostream& i_os, const ParseTree& i_parseTree, unsigned i_marginNum);
+//	static void PrintTree(ostream& i_os, const ParseTree& i_parseTree, unsigned i_marginNum);
 public:
 	Parser();
 	Parser(const SyntaxGrammar& i_grammar);
@@ -42,7 +38,7 @@ public:
 	ParseTree Parse();
 	ParseTree Parse(const vector<TToken>& i_input);
 
-	static void PrintTree(ostream& i_os, const ParseTree& i_parseTree);
+//	static void PrintTree(ostream& i_os, const ParseTree& i_parseTree);
 };
 
 #endif /* PARSER_H_ */

@@ -28,7 +28,7 @@ public:
 	SyntaxGrammar& operator()(const SyntaxRuleAtom& i_leftPart, const vector<SyntaxRuleAtom>& i_rightPart, Rule::TRuleNumber i_ruleNum);
 
 	vector<Rule> getMatchedRules(const SyntaxRuleAtom& i_leftPart)const;
-	SyntaxRuleAtom getRuleBase()const {return m_ruleBase;}
+	SyntaxRuleAtom getRuleBase(){return m_ruleBase;}
 };
 
 #endif /* SRC_SYNTAXGRAMMAR_H_ */

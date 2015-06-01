@@ -21,7 +21,9 @@ private:
 	bool m_isTerminalFlag;
 	//TODO: research if there is more optimal way to keep XOR-data (or use union otherwise)
 	string m_nterminal;
+
 	TToken::TTokenClass m_terminal;
+	TToken m_associatedToken; //TODO: re-engineering needed
 public:
 	SyntaxRuleAtom();
 	SyntaxRuleAtom(const TToken::TTokenClass& i_tokenClass);
@@ -35,6 +37,9 @@ public:
 	bool IsTerminal() const {return m_isTerminalFlag;}
 	TToken::TTokenClass getTerminal() const {return m_terminal;}
 	string getNterminal() const {return m_nterminal;}
+
+	void setAssociatedToken(const TToken& i_token) {m_associatedToken = i_token;} //TODO: re-engineering needed
+	const TToken getAssociatedToken()const {return m_associatedToken;} //TODO: re-engineering needed
 
 	friend ostream& operator<<(ostream& io_os, const SyntaxRuleAtom& i_synAtom);
 };

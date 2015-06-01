@@ -34,20 +34,20 @@ Lexical analyze:
 5:15	semicolom	;
 5:16	procedure	procedure
 7:10	id	MyProc
-7:17	lbr	(
-7:18	var	var
-7:21	id	a
-7:23	comma	,
-7:24	id	b
-7:26	colom	:
-7:27	integer	integer
-7:34	semicolom	;
-7:35	const	const
-7:41	id	k
-7:43	colom	:
-7:44	Boolean	Boolean
-7:51	rbr	)
-7:52	var	var
+7:28	lbr	(
+7:29	var	var
+7:32	id	a
+7:34	comma	,
+7:35	id	b
+7:37	colom	:
+7:38	integer	integer
+7:45	semicolom	;
+7:46	const	const
+7:52	id	k
+7:54	colom	:
+7:55	Boolean	Boolean
+7:62	rbr	)
+7:63	var	var
 8:4	id	a
 8:6	colom	:
 8:7	real	real
@@ -75,66 +75,74 @@ Lexical analyze:
 14:9	id	o
 15:3	ass	:=
 15:5	intval	5
-15:6	end	end
-16:4	semicolom	;
-16:5	if	if
-17:3	lbr	(
+15:6	semicolom	;
+15:7	if	if
+16:4	lbr	(
+16:6	lbr	(
+16:7	intval	5
+16:8	add	+
+16:9	intval	7
+16:10	rbr	)
+16:11	add	+
+16:12	lbr	(
+16:13	id	a
+16:14	le	<
+16:16	intval	7
+16:18	rbr	)
+16:19	rbr	)
+16:20	then	then
+16:25	id	g
+17:3	ass	:=
 17:5	id	a
-17:6	le	<
-17:8	intval	7
-17:10	rbr	)
-17:11	then	then
-17:16	id	g
+17:6	mul	*
+17:7	lbr	(
+17:8	id	a
+17:9	add	+
+17:10	id	a
+17:11	rbr	)
+17:12	div	/
+17:13	id	a
+17:14	le	<
+17:16	id	a
+17:18	semicolom	;
+17:19	id	f
 18:3	ass	:=
 18:5	id	a
-18:6	mul	*
-18:7	lbr	(
-18:8	id	a
-18:9	add	+
-18:10	id	a
-18:11	rbr	)
-18:12	div	/
-18:13	id	a
-18:14	le	<
-18:16	id	a
-18:18	semicolom	;
-18:19	id	f
-19:3	ass	:=
-19:5	id	a
-19:6	elsif	elsif
-20:6	lbr	(
-20:8	id	a
-20:9	le	<
-20:11	intval	1
-20:13	rbr	)
-20:14	then	then
-20:19	id	g
-21:3	ass	:=
-21:5	intval	4
-21:6	else	else
-22:5	id	g
-23:3	ass	:=
-23:5	boolval	false
-23:10	end	end
+18:6	elsif	elsif
+19:6	lbr	(
+19:8	id	a
+19:9	le	<
+19:11	intval	1
+19:13	rbr	)
+19:14	then	then
+19:19	id	g
+20:3	ass	:=
+20:5	intval	4
+20:6	else	else
+21:5	id	g
+22:3	ass	:=
+22:5	boolval	false
+22:10	end	end
+23:4	end	end
 24:4	semicolom	;
 24:5	id	g
-25:2	ass	:=
-25:4	id	func
-25:9	lbr	(
-25:10	id	arrv
-25:14	lbrind	[
-25:15	intval	1
-25:16	rbrind	]
-25:17	lbrind	[
-25:18	intval	3
-25:19	rbrind	]
-25:20	comma	,
-25:21	id	g
-25:23	rbr	)
-25:24	end	end
-26:3	id	Main
-26:8	dot	.
-26:9	eof	
+26:2	ass	:=
+26:4	id	func
+26:9	lbr	(
+26:10	id	arrv
+26:14	lbrind	[
+26:15	intval	1
+26:16	rbrind	]
+26:17	lbrind	[
+26:18	intval	3
+26:19	rbrind	]
+26:20	comma	,
+26:21	id	g
+26:23	rbr	)
+26:24	end	end
+27:3	id	Main
+27:8	dot	.
+27:9	eof	
 Syntax analyze:
 1: <program>::=<module> dot 
 	2: <module>::=<moduleheading> <block> id 
@@ -317,174 +325,240 @@ Syntax analyze:
 																98: <fcttermmul>::=Lambda
 															92: <fcttermadd>::=Lambda
 														87: <fctsimpleexpression>::=Lambda
-											73: <fctstatement>::=Lambda
-						72: <fctstatement>::=semicolom <statementsequence> 
-							71: <statementsequence>::=<statement> <fctstatement> 
-								76: <statement>::=<ifstatement> 
-									125: <ifstatement>::=if <expression> then <statementsequence> <fctifstatement> 
-										85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-											89: <SimpleExpression>::=<term> <fcttermadd> 
-												96: <term>::=<factor> <fcttermmul> 
-													103: <factor>::=lbr <expression> rbr 
-														85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-															89: <SimpleExpression>::=<term> <fcttermadd> 
-																96: <term>::=<factor> <fcttermmul> 
-																	102: <factor>::=<variable> 
-																		79: <variable>::=id <fctvar> 
-																			81: <fctvar>::=Lambda
-																	98: <fcttermmul>::=Lambda
-																92: <fcttermadd>::=Lambda
-															86: <fctsimpleexpression>::=<mbrelation> 
-																88: <mbrelation>::=<relation> <SimpleExpression> 
-																	120: <relation>::=le 
-																	89: <SimpleExpression>::=<term> <fcttermadd> 
-																		96: <term>::=<factor> <fcttermmul> 
-																			100: <factor>::=<unsignedconstant> 
-																				30: <unsignedconstant>::=<number> 
-																					34: <number>::=intval 
-																			98: <fcttermmul>::=Lambda
-																		92: <fcttermadd>::=Lambda
-													98: <fcttermmul>::=Lambda
-												92: <fcttermadd>::=Lambda
-											87: <fctsimpleexpression>::=Lambda
-										71: <statementsequence>::=<statement> <fctstatement> 
-											74: <statement>::=<assignment> 
-												78: <assignment>::=<variable> ass <expression> 
-													79: <variable>::=id <fctvar> 
-														81: <fctvar>::=Lambda
-													85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-														89: <SimpleExpression>::=<term> <fcttermadd> 
-															96: <term>::=<factor> <fcttermmul> 
-																102: <factor>::=<variable> 
-																	79: <variable>::=id <fctvar> 
-																		81: <fctvar>::=Lambda
-																97: <fcttermmul>::=<mbmultiplication> 
-																	99: <mbmultiplication>::=<muloperator> <factor> <fcttermmul> 
-																		113: <muloperator>::=mul 
+											72: <fctstatement>::=semicolom <statementsequence> 
+												71: <statementsequence>::=<statement> <fctstatement> 
+													76: <statement>::=<ifstatement> 
+														125: <ifstatement>::=if <expression> then <statementsequence> <fctifstatement> 
+															85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																89: <SimpleExpression>::=<term> <fcttermadd> 
+																	96: <term>::=<factor> <fcttermmul> 
 																		103: <factor>::=lbr <expression> rbr 
 																			85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
 																				89: <SimpleExpression>::=<term> <fcttermadd> 
 																					96: <term>::=<factor> <fcttermmul> 
-																						102: <factor>::=<variable> 
-																							79: <variable>::=id <fctvar> 
-																								81: <fctvar>::=Lambda
+																						103: <factor>::=lbr <expression> rbr 
+																							85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																								89: <SimpleExpression>::=<term> <fcttermadd> 
+																									96: <term>::=<factor> <fcttermmul> 
+																										100: <factor>::=<unsignedconstant> 
+																											30: <unsignedconstant>::=<number> 
+																												34: <number>::=intval 
+																										98: <fcttermmul>::=Lambda
+																									91: <fcttermadd>::=<mbaddition> 
+																										95: <mbaddition>::=<addoperator> <term> <fcttermadd> 
+																											116: <addoperator>::=add 
+																											96: <term>::=<factor> <fcttermmul> 
+																												100: <factor>::=<unsignedconstant> 
+																													30: <unsignedconstant>::=<number> 
+																														34: <number>::=intval 
+																												98: <fcttermmul>::=Lambda
+																											92: <fcttermadd>::=Lambda
+																								87: <fctsimpleexpression>::=Lambda
 																						98: <fcttermmul>::=Lambda
 																					91: <fcttermadd>::=<mbaddition> 
 																						95: <mbaddition>::=<addoperator> <term> <fcttermadd> 
 																							116: <addoperator>::=add 
+																							96: <term>::=<factor> <fcttermmul> 
+																								103: <factor>::=lbr <expression> rbr 
+																									85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																										89: <SimpleExpression>::=<term> <fcttermadd> 
+																											96: <term>::=<factor> <fcttermmul> 
+																												102: <factor>::=<variable> 
+																													79: <variable>::=id <fctvar> 
+																														81: <fctvar>::=Lambda
+																												98: <fcttermmul>::=Lambda
+																											92: <fcttermadd>::=Lambda
+																										86: <fctsimpleexpression>::=<mbrelation> 
+																											88: <mbrelation>::=<relation> <SimpleExpression> 
+																												120: <relation>::=le 
+																												89: <SimpleExpression>::=<term> <fcttermadd> 
+																													96: <term>::=<factor> <fcttermmul> 
+																														100: <factor>::=<unsignedconstant> 
+																															30: <unsignedconstant>::=<number> 
+																																34: <number>::=intval 
+																														98: <fcttermmul>::=Lambda
+																													92: <fcttermadd>::=Lambda
+																								98: <fcttermmul>::=Lambda
+																							92: <fcttermadd>::=Lambda
+																				87: <fctsimpleexpression>::=Lambda
+																		98: <fcttermmul>::=Lambda
+																	92: <fcttermadd>::=Lambda
+																87: <fctsimpleexpression>::=Lambda
+															71: <statementsequence>::=<statement> <fctstatement> 
+																74: <statement>::=<assignment> 
+																	78: <assignment>::=<variable> ass <expression> 
+																		79: <variable>::=id <fctvar> 
+																			81: <fctvar>::=Lambda
+																		85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																			89: <SimpleExpression>::=<term> <fcttermadd> 
+																				96: <term>::=<factor> <fcttermmul> 
+																					102: <factor>::=<variable> 
+																						79: <variable>::=id <fctvar> 
+																							81: <fctvar>::=Lambda
+																					97: <fcttermmul>::=<mbmultiplication> 
+																						99: <mbmultiplication>::=<muloperator> <factor> <fcttermmul> 
+																							113: <muloperator>::=mul 
+																							103: <factor>::=lbr <expression> rbr 
+																								85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																									89: <SimpleExpression>::=<term> <fcttermadd> 
+																										96: <term>::=<factor> <fcttermmul> 
+																											102: <factor>::=<variable> 
+																												79: <variable>::=id <fctvar> 
+																													81: <fctvar>::=Lambda
+																											98: <fcttermmul>::=Lambda
+																										91: <fcttermadd>::=<mbaddition> 
+																											95: <mbaddition>::=<addoperator> <term> <fcttermadd> 
+																												116: <addoperator>::=add 
+																												96: <term>::=<factor> <fcttermmul> 
+																													102: <factor>::=<variable> 
+																														79: <variable>::=id <fctvar> 
+																															81: <fctvar>::=Lambda
+																													98: <fcttermmul>::=Lambda
+																												92: <fcttermadd>::=Lambda
+																									87: <fctsimpleexpression>::=Lambda
+																							97: <fcttermmul>::=<mbmultiplication> 
+																								99: <mbmultiplication>::=<muloperator> <factor> <fcttermmul> 
+																									114: <muloperator>::=div 
+																									102: <factor>::=<variable> 
+																										79: <variable>::=id <fctvar> 
+																											81: <fctvar>::=Lambda
+																									98: <fcttermmul>::=Lambda
+																				92: <fcttermadd>::=Lambda
+																			86: <fctsimpleexpression>::=<mbrelation> 
+																				88: <mbrelation>::=<relation> <SimpleExpression> 
+																					120: <relation>::=le 
+																					89: <SimpleExpression>::=<term> <fcttermadd> 
+																						96: <term>::=<factor> <fcttermmul> 
+																							102: <factor>::=<variable> 
+																								79: <variable>::=id <fctvar> 
+																									81: <fctvar>::=Lambda
+																							98: <fcttermmul>::=Lambda
+																						92: <fcttermadd>::=Lambda
+																72: <fctstatement>::=semicolom <statementsequence> 
+																	71: <statementsequence>::=<statement> <fctstatement> 
+																		74: <statement>::=<assignment> 
+																			78: <assignment>::=<variable> ass <expression> 
+																				79: <variable>::=id <fctvar> 
+																					81: <fctvar>::=Lambda
+																				85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																					89: <SimpleExpression>::=<term> <fcttermadd> 
+																						96: <term>::=<factor> <fcttermmul> 
+																							102: <factor>::=<variable> 
+																								79: <variable>::=id <fctvar> 
+																									81: <fctvar>::=Lambda
+																							98: <fcttermmul>::=Lambda
+																						92: <fcttermadd>::=Lambda
+																					87: <fctsimpleexpression>::=Lambda
+																		73: <fctstatement>::=Lambda
+															127: <fctifstatement>::=<mbelsifs> <fctmbelsifs> 
+																131: <mbelsifs>::=elsif <expression> then <statementsequence> <fctmbelsifs1> 
+																	85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																		89: <SimpleExpression>::=<term> <fcttermadd> 
+																			96: <term>::=<factor> <fcttermmul> 
+																				103: <factor>::=lbr <expression> rbr 
+																					85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																						89: <SimpleExpression>::=<term> <fcttermadd> 
 																							96: <term>::=<factor> <fcttermmul> 
 																								102: <factor>::=<variable> 
 																									79: <variable>::=id <fctvar> 
 																										81: <fctvar>::=Lambda
 																								98: <fcttermmul>::=Lambda
 																							92: <fcttermadd>::=Lambda
-																				87: <fctsimpleexpression>::=Lambda
-																		97: <fcttermmul>::=<mbmultiplication> 
-																			99: <mbmultiplication>::=<muloperator> <factor> <fcttermmul> 
-																				114: <muloperator>::=div 
-																				102: <factor>::=<variable> 
-																					79: <variable>::=id <fctvar> 
-																						81: <fctvar>::=Lambda
+																						86: <fctsimpleexpression>::=<mbrelation> 
+																							88: <mbrelation>::=<relation> <SimpleExpression> 
+																								120: <relation>::=le 
+																								89: <SimpleExpression>::=<term> <fcttermadd> 
+																									96: <term>::=<factor> <fcttermmul> 
+																										100: <factor>::=<unsignedconstant> 
+																											30: <unsignedconstant>::=<number> 
+																												34: <number>::=intval 
+																										98: <fcttermmul>::=Lambda
+																									92: <fcttermadd>::=Lambda
 																				98: <fcttermmul>::=Lambda
-															92: <fcttermadd>::=Lambda
-														86: <fctsimpleexpression>::=<mbrelation> 
-															88: <mbrelation>::=<relation> <SimpleExpression> 
-																120: <relation>::=le 
-																89: <SimpleExpression>::=<term> <fcttermadd> 
-																	96: <term>::=<factor> <fcttermmul> 
-																		102: <factor>::=<variable> 
-																			79: <variable>::=id <fctvar> 
-																				81: <fctvar>::=Lambda
-																		98: <fcttermmul>::=Lambda
-																	92: <fcttermadd>::=Lambda
-											72: <fctstatement>::=semicolom <statementsequence> 
-												71: <statementsequence>::=<statement> <fctstatement> 
-													74: <statement>::=<assignment> 
-														78: <assignment>::=<variable> ass <expression> 
-															79: <variable>::=id <fctvar> 
-																81: <fctvar>::=Lambda
-															85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																89: <SimpleExpression>::=<term> <fcttermadd> 
-																	96: <term>::=<factor> <fcttermmul> 
-																		102: <factor>::=<variable> 
-																			79: <variable>::=id <fctvar> 
-																				81: <fctvar>::=Lambda
-																		98: <fcttermmul>::=Lambda
-																	92: <fcttermadd>::=Lambda
-																87: <fctsimpleexpression>::=Lambda
-													73: <fctstatement>::=Lambda
-										127: <fctifstatement>::=<mbelsifs> <fctmbelsifs> 
-											131: <mbelsifs>::=elsif <expression> then <statementsequence> <fctmbelsifs1> 
-												85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-													89: <SimpleExpression>::=<term> <fcttermadd> 
-														96: <term>::=<factor> <fcttermmul> 
-															103: <factor>::=lbr <expression> rbr 
-																85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																	89: <SimpleExpression>::=<term> <fcttermadd> 
-																		96: <term>::=<factor> <fcttermmul> 
-																			102: <factor>::=<variable> 
+																			92: <fcttermadd>::=Lambda
+																		87: <fctsimpleexpression>::=Lambda
+																	71: <statementsequence>::=<statement> <fctstatement> 
+																		74: <statement>::=<assignment> 
+																			78: <assignment>::=<variable> ass <expression> 
 																				79: <variable>::=id <fctvar> 
 																					81: <fctvar>::=Lambda
-																			98: <fcttermmul>::=Lambda
-																		92: <fcttermadd>::=Lambda
-																	86: <fctsimpleexpression>::=<mbrelation> 
-																		88: <mbrelation>::=<relation> <SimpleExpression> 
-																			120: <relation>::=le 
-																			89: <SimpleExpression>::=<term> <fcttermadd> 
-																				96: <term>::=<factor> <fcttermmul> 
-																					100: <factor>::=<unsignedconstant> 
-																						30: <unsignedconstant>::=<number> 
-																							34: <number>::=intval 
-																					98: <fcttermmul>::=Lambda
-																				92: <fcttermadd>::=Lambda
-															98: <fcttermmul>::=Lambda
-														92: <fcttermadd>::=Lambda
-													87: <fctsimpleexpression>::=Lambda
-												71: <statementsequence>::=<statement> <fctstatement> 
-													74: <statement>::=<assignment> 
-														78: <assignment>::=<variable> ass <expression> 
-															79: <variable>::=id <fctvar> 
-																81: <fctvar>::=Lambda
-															85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																89: <SimpleExpression>::=<term> <fcttermadd> 
-																	96: <term>::=<factor> <fcttermmul> 
-																		100: <factor>::=<unsignedconstant> 
-																			30: <unsignedconstant>::=<number> 
-																				34: <number>::=intval 
-																		98: <fcttermmul>::=Lambda
-																	92: <fcttermadd>::=Lambda
-																87: <fctsimpleexpression>::=Lambda
+																				85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																					89: <SimpleExpression>::=<term> <fcttermadd> 
+																						96: <term>::=<factor> <fcttermmul> 
+																							100: <factor>::=<unsignedconstant> 
+																								30: <unsignedconstant>::=<number> 
+																									34: <number>::=intval 
+																							98: <fcttermmul>::=Lambda
+																						92: <fcttermadd>::=Lambda
+																					87: <fctsimpleexpression>::=Lambda
+																		73: <fctstatement>::=Lambda
+																	133: <fctmbelsifs1>::=Lambda
+																130: <fctmbelsifs>::=<mbelse> end 
+																	134: <mbelse>::=else <statementsequence> 
+																		71: <statementsequence>::=<statement> <fctstatement> 
+																			74: <statement>::=<assignment> 
+																				78: <assignment>::=<variable> ass <expression> 
+																					79: <variable>::=id <fctvar> 
+																						81: <fctvar>::=Lambda
+																					85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																						89: <SimpleExpression>::=<term> <fcttermadd> 
+																							96: <term>::=<factor> <fcttermmul> 
+																								100: <factor>::=<unsignedconstant> 
+																									29: <unsignedconstant>::=boolval 
+																								98: <fcttermmul>::=Lambda
+																							92: <fcttermadd>::=Lambda
+																						87: <fctsimpleexpression>::=Lambda
+																			73: <fctstatement>::=Lambda
 													73: <fctstatement>::=Lambda
-												133: <fctmbelsifs1>::=Lambda
-											130: <fctmbelsifs>::=<mbelse> end 
-												134: <mbelse>::=else <statementsequence> 
-													71: <statementsequence>::=<statement> <fctstatement> 
-														74: <statement>::=<assignment> 
-															78: <assignment>::=<variable> ass <expression> 
-																79: <variable>::=id <fctvar> 
-																	81: <fctvar>::=Lambda
-																85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																	89: <SimpleExpression>::=<term> <fcttermadd> 
-																		96: <term>::=<factor> <fcttermmul> 
-																			100: <factor>::=<unsignedconstant> 
-																				29: <unsignedconstant>::=boolval 
-																			98: <fcttermmul>::=Lambda
-																		92: <fcttermadd>::=Lambda
-																	87: <fctsimpleexpression>::=Lambda
-														73: <fctstatement>::=Lambda
-								72: <fctstatement>::=semicolom <statementsequence> 
-									71: <statementsequence>::=<statement> <fctstatement> 
-										74: <statement>::=<assignment> 
-											78: <assignment>::=<variable> ass <expression> 
-												79: <variable>::=id <fctvar> 
-													81: <fctvar>::=Lambda
-												85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-													89: <SimpleExpression>::=<term> <fcttermadd> 
-														96: <term>::=<factor> <fcttermmul> 
-															101: <factor>::=<functioncall> 
-																104: <functioncall>::=id <parameterlist> 
-																	105: <parameterlist>::=lbr <fctparameters> rbr 
-																		106: <fctparameters>::=<parameters> 
+						72: <fctstatement>::=semicolom <statementsequence> 
+							71: <statementsequence>::=<statement> <fctstatement> 
+								74: <statement>::=<assignment> 
+									78: <assignment>::=<variable> ass <expression> 
+										79: <variable>::=id <fctvar> 
+											81: <fctvar>::=Lambda
+										85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+											89: <SimpleExpression>::=<term> <fcttermadd> 
+												96: <term>::=<factor> <fcttermmul> 
+													101: <factor>::=<functioncall> 
+														104: <functioncall>::=id <parameterlist> 
+															105: <parameterlist>::=lbr <fctparameters> rbr 
+																106: <fctparameters>::=<parameters> 
+																	108: <parameters>::=<parameter> <fctparameter> 
+																		111: <parameter>::=<expression> 
+																			85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																				89: <SimpleExpression>::=<term> <fcttermadd> 
+																					96: <term>::=<factor> <fcttermmul> 
+																						102: <factor>::=<variable> 
+																							79: <variable>::=id <fctvar> 
+																								80: <fctvar>::=lbrind <indices> rbrind <fctvar> 
+																									82: <indices>::=<expression> <fctexpr> 
+																										85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																											89: <SimpleExpression>::=<term> <fcttermadd> 
+																												96: <term>::=<factor> <fcttermmul> 
+																													100: <factor>::=<unsignedconstant> 
+																														30: <unsignedconstant>::=<number> 
+																															34: <number>::=intval 
+																													98: <fcttermmul>::=Lambda
+																												92: <fcttermadd>::=Lambda
+																											87: <fctsimpleexpression>::=Lambda
+																										84: <fctexpr>::=Lambda
+																									80: <fctvar>::=lbrind <indices> rbrind <fctvar> 
+																										82: <indices>::=<expression> <fctexpr> 
+																											85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																												89: <SimpleExpression>::=<term> <fcttermadd> 
+																													96: <term>::=<factor> <fcttermmul> 
+																														100: <factor>::=<unsignedconstant> 
+																															30: <unsignedconstant>::=<number> 
+																																34: <number>::=intval 
+																														98: <fcttermmul>::=Lambda
+																													92: <fcttermadd>::=Lambda
+																												87: <fctsimpleexpression>::=Lambda
+																											84: <fctexpr>::=Lambda
+																										81: <fctvar>::=Lambda
+																						98: <fcttermmul>::=Lambda
+																					92: <fcttermadd>::=Lambda
+																				87: <fctsimpleexpression>::=Lambda
+																		109: <fctparameter>::=comma <parameters> 
 																			108: <parameters>::=<parameter> <fctparameter> 
 																				111: <parameter>::=<expression> 
 																					85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
@@ -492,48 +566,12 @@ Syntax analyze:
 																							96: <term>::=<factor> <fcttermmul> 
 																								102: <factor>::=<variable> 
 																									79: <variable>::=id <fctvar> 
-																										80: <fctvar>::=lbrind <indices> rbrind <fctvar> 
-																											82: <indices>::=<expression> <fctexpr> 
-																												85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																													89: <SimpleExpression>::=<term> <fcttermadd> 
-																														96: <term>::=<factor> <fcttermmul> 
-																															100: <factor>::=<unsignedconstant> 
-																																30: <unsignedconstant>::=<number> 
-																																	34: <number>::=intval 
-																															98: <fcttermmul>::=Lambda
-																														92: <fcttermadd>::=Lambda
-																													87: <fctsimpleexpression>::=Lambda
-																												84: <fctexpr>::=Lambda
-																											80: <fctvar>::=lbrind <indices> rbrind <fctvar> 
-																												82: <indices>::=<expression> <fctexpr> 
-																													85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																														89: <SimpleExpression>::=<term> <fcttermadd> 
-																															96: <term>::=<factor> <fcttermmul> 
-																																100: <factor>::=<unsignedconstant> 
-																																	30: <unsignedconstant>::=<number> 
-																																		34: <number>::=intval 
-																																98: <fcttermmul>::=Lambda
-																															92: <fcttermadd>::=Lambda
-																														87: <fctsimpleexpression>::=Lambda
-																													84: <fctexpr>::=Lambda
-																												81: <fctvar>::=Lambda
+																										81: <fctvar>::=Lambda
 																								98: <fcttermmul>::=Lambda
 																							92: <fcttermadd>::=Lambda
 																						87: <fctsimpleexpression>::=Lambda
-																				109: <fctparameter>::=comma <parameters> 
-																					108: <parameters>::=<parameter> <fctparameter> 
-																						111: <parameter>::=<expression> 
-																							85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																								89: <SimpleExpression>::=<term> <fcttermadd> 
-																									96: <term>::=<factor> <fcttermmul> 
-																										102: <factor>::=<variable> 
-																											79: <variable>::=id <fctvar> 
-																												81: <fctvar>::=Lambda
-																										98: <fcttermmul>::=Lambda
-																									92: <fcttermadd>::=Lambda
-																								87: <fctsimpleexpression>::=Lambda
-																						110: <fctparameter>::=Lambda
-															98: <fcttermmul>::=Lambda
-														92: <fcttermadd>::=Lambda
-													87: <fctsimpleexpression>::=Lambda
-										73: <fctstatement>::=Lambda
+																				110: <fctparameter>::=Lambda
+													98: <fcttermmul>::=Lambda
+												92: <fcttermadd>::=Lambda
+											87: <fctsimpleexpression>::=Lambda
+								73: <fctstatement>::=Lambda

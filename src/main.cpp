@@ -15,6 +15,7 @@
 #include "TLexicalException.h"
 #include "Parser.h"
 #include "SyntaxException.h"
+#include "ParseTree.h"
 
 using std::cout;
 using std::endl;
@@ -61,9 +62,9 @@ int main(int argn, const char* argv[]){
 		//Syntax analyze
 		tokens.pop_back();
 		parser.setInput(tokens);
-		Parser::ParseTree parseTree = parser.Parse();
+		ParseTree parseTree = parser.Parse();
 		outFile << "Syntax analyze:" << endl;
-		Parser::PrintTree(outFile, parseTree);
+		outFile << parseTree;
 	}
 	catch(TLexicalException& e){
 		outFile << "Lexical error:" << endl;

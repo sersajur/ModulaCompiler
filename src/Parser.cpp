@@ -291,7 +291,7 @@ void Parser::Configurate(){
 void Parser::setInput(const vector<TToken>& i_input){
 	m_input = i_input;
 }
-Parser::ParseTree  Parser::Parse(){
+ParseTree  Parser::Parse(){
 	m_firstUnrecognized = m_currentInputTerminal = m_input.begin();
 	ParseTree o_parseTree{};
 	bool o_parseResult{Parse(m_grammar.getRuleBase(), o_parseTree)};
@@ -306,7 +306,7 @@ Parser::ParseTree  Parser::Parse(){
 		throw SyntaxException(*m_currentInputTerminal, "There is no matched rules for tokens after this one");
 	return o_parseTree;
 }
-Parser::ParseTree Parser::Parse(const vector<TToken>& i_input){
+ParseTree Parser::Parse(const vector<TToken>& i_input){
 	m_input = i_input;
 	return Parser::Parse();
 }
@@ -347,8 +347,8 @@ bool Parser::Parse(const SyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 	}
 
 	if (matchedRule.IsInit()){
-		o_parseTree.rule = matchedRule;
-		o_parseTree.childRules = childNodes;
+		o_parseTree.setNode(matchedRule);
+		o_parseTree.setChildren(childNodes);
 	}
 
 //Debug:
@@ -383,13 +383,13 @@ bool Parser::CheckNextTerminal(const TToken::TTokenClass& i_tokenClassToBeCompar
 
 	return isEqual;
 }
-void Parser::PrintTree(ostream& i_os, const ParseTree& i_parseTree){
-	Parser::PrintTree(i_os, i_parseTree, 0);
-}
-void Parser::PrintTree(ostream& i_os, const ParseTree& i_parseTree, const unsigned i_marginNum){
-	for (auto counter = i_marginNum; counter > 0; counter--)
-		i_os << '\t';
-	i_os << i_parseTree.rule << endl;
-	for (auto& it : i_parseTree.childRules)
-		Parser::PrintTree(i_os, it, i_marginNum+1);
-}
+//void Parser::PrintTree(ostream& i_os, const ParseTree& i_parseTree){
+//	Parser::PrintTree(i_os, i_parseTree, 0);
+//}
+//void Parser::PrintTree(ostream& i_os, const ParseTree& i_parseTree, const unsigned i_marginNum){
+//	for (auto counter = i_marginNum; counter > 0; counter--)
+//		i_os << '\t';
+//	i_os << i_parseTree.rule << endl;
+//	for (auto& it : i_parseTree.childRules)
+//		Parser::PrintTree(i_os, it, i_marginNum+1);
+//}
