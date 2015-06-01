@@ -12,6 +12,7 @@
 #include <ostream>
 #include "Rule.h"
 #include "TToken.h"
+#include "TableOfNames.h"
 
 class ParseTree {
 private:
@@ -28,6 +29,8 @@ public:
 	void setChildren(const std::vector<ParseTree>& i_children);
 
 	void AssociateWithInput(const std::vector<TToken>& i_input);
+	TableOfNames SymanticAnalyze();
+
 	friend std::ostream& operator<<(std::ostream& io_os, const ParseTree& i_parseTree);
 
 	void TestPrint(std::ostream& o_os)const; //TODO: remove debug
