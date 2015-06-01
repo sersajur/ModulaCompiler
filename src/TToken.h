@@ -85,7 +85,8 @@ public:
 		bool asBool;
 		int asInt;
 		float asReal;
-		//TODO: repair the union, extend it dor string
+		TTokenValue(){}
+		//TODO: repair the union, extend it for string
 //		string asString;
 //		TTokenValue(): asString(){}
 //		TTokenValue(const TTokenValue& i_value){ this->asString = i_value.asString; }

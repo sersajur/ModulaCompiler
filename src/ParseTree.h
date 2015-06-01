@@ -30,7 +30,7 @@ public:
 	void AssociateWithInput(const std::vector<TToken>& i_input);
 	friend std::ostream& operator<<(std::ostream& io_os, const ParseTree& i_parseTree);
 
-	void TestPrint(std::ostream& o_os)const;
+	void TestPrint(std::ostream& o_os)const; //TODO: remove debug
 };
 
 #endif /* PARSETREE_H_ */
