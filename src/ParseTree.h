@@ -19,6 +19,7 @@ private:
 	std::vector<ParseTree>  m_childRules;
 private:
 	std::ostream& FormatedPrint(std::ostream& io_os, const unsigned i_tabCounter) const;
+	void AssociateWithInput(std::vector<TToken>::const_iterator& io_it);
 public:
 	ParseTree();
 	virtual ~ParseTree();
@@ -26,8 +27,10 @@ public:
 	void setNode(const Rule& i_rule);
 	void setChildren(const std::vector<ParseTree>& i_children);
 
-	void AssociateWithInput(const std::vector<TToken>);
+	void AssociateWithInput(const std::vector<TToken>& i_input);
 	friend std::ostream& operator<<(std::ostream& io_os, const ParseTree& i_parseTree);
+
+	void TestPrint(std::ostream& o_os)const;
 };
 
 #endif /* PARSETREE_H_ */

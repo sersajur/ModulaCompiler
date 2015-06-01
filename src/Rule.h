@@ -32,6 +32,7 @@ public:
 	bool IsInit()const {return m_isInit;}
 	bool IsLambda() const {return m_isInit && m_rightPart.empty();}
 	friend ostream& operator<<(ostream& io_os, const Rule& i_rule);
+	friend class ParseTree;
 private:
 	bool m_isInit;
 	TRuleNumber m_number;

@@ -27,6 +27,22 @@ void ParseTree::setChildren(const std::vector<ParseTree>& i_children){
 	m_childRules = i_children;
 }
 
+void ParseTree::AssociateWithInput(std::vector<TToken>::const_iterator& io_it){
+	auto subtree = m_childRules.begin();
+	for (auto& it : m_rule.m_rightPart)
+		if (it.IsTerminal())
+			it.setAssociatedToken(*io_it++);
+		else{
+			subtree->AssociateWithInput(io_it);
+			subtree++;
+		}
+}
+
+void ParseTree::AssociateWithInput(const std::vector<TToken>& i_input){
+	std::vector<TToken>::const_iterator startInput = i_input.begin();
+	this->AssociateWithInput(startInput);
+}
+
 ostream& ParseTree::FormatedPrint(ostream& io_os, const unsigned i_tabCounter) const{
 	for (auto counter = i_tabCounter; counter > 0; counter--)
 		io_os << '\t';
@@ -38,4 +54,15 @@ ostream& ParseTree::FormatedPrint(ostream& io_os, const unsigned i_tabCounter) c
 
 ostream& operator<<(ostream& io_os, const ParseTree& i_parseTree){
 	return i_parseTree.FormatedPrint(io_os, 0);
+}
+void ParseTree::TestPrint(std::ostream& o_os)const{
+	auto subtree = m_childRules.begin();
+	for (auto& it : m_rule.m_rightPart)
+		if (it.IsTerminal())
+			o_os << it << ": " << it.getAssociatedToken() << std::endl;
+		else{
+			subtree->TestPrint(o_os);
+			subtree++;
+		}
+
 }

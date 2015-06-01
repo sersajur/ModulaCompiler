@@ -65,6 +65,9 @@ int main(int argn, const char* argv[]){
 		ParseTree parseTree = parser.Parse();
 		outFile << "Syntax analyze:" << endl;
 		outFile << parseTree;
+		//Semantic analyze
+		parseTree.AssociateWithInput(tokens);
+		parseTree.TestPrint(outFile);
 	}
 	catch(TLexicalException& e){
 		outFile << "Lexical error:" << endl;
