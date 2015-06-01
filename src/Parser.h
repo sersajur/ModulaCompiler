@@ -13,7 +13,7 @@
 #include <iostream>
 
 #include "TToken.h"
-#include "TSyntaxRuleAtom.h"
+#include "SyntaxRuleAtom.h"
 #include "Rule.h"
 #include "SyntaxGrammar.h"
 
@@ -30,7 +30,7 @@ private:
 	vector<TToken>::iterator m_currentInputTerminal, m_firstUnrecognized;
 
 	bool CheckNextTerminal(const TToken::TTokenClass& i_tokenClassToBeCompared);
-	bool Parse(const TSyntaxRuleAtom i_ruleAtom, ParseTree& io_pareTree);
+	bool Parse(const SyntaxRuleAtom i_ruleAtom, ParseTree& io_pareTree);
 	static void PrintTree(ostream& i_os, const ParseTree& i_parseTree, unsigned i_marginNum);
 public:
 	Parser();

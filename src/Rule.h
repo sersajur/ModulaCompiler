@@ -11,7 +11,7 @@
 #include <vector>
 #include <iostream>
 
-#include "TSyntaxRuleAtom.h"
+#include "SyntaxRuleAtom.h"
 
 using std::vector;
 using std::pair;
@@ -20,14 +20,14 @@ using std::ostream;
 class Rule {
 public:
 	typedef unsigned TRuleNumber;
-	typedef vector<TSyntaxRuleAtom> TRightPart;
+	typedef vector<SyntaxRuleAtom> TRightPart;
 
 	Rule():
 		m_isInit{false}, m_number{0}
 	{}
-	Rule(TRuleNumber i_num, const TSyntaxRuleAtom& i_leftPart, const vector<TSyntaxRuleAtom>& i_rightPart);
+	Rule(TRuleNumber i_num, const SyntaxRuleAtom& i_leftPart, const vector<SyntaxRuleAtom>& i_rightPart);
 	virtual ~Rule();
-	operator pair<TSyntaxRuleAtom, Rule>();
+	operator pair<SyntaxRuleAtom, Rule>();
 	TRightPart getRightPart()const {return m_rightPart;}
 	bool IsInit()const {return m_isInit;}
 	bool IsLambda() const {return m_isInit && m_rightPart.empty();}
@@ -35,7 +35,7 @@ public:
 private:
 	bool m_isInit;
 	TRuleNumber m_number;
-	TSyntaxRuleAtom m_leftPart;
+	SyntaxRuleAtom m_leftPart;
 	TRightPart m_rightPart;
 };
 

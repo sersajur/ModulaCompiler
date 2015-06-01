@@ -10,25 +10,25 @@
 
 #include <map>
 
-#include "TSyntaxRuleAtom.h"
+#include "SyntaxRuleAtom.h"
 #include "Rule.h"
 
 using std::multimap;
 
 class SyntaxGrammar {
-	TSyntaxRuleAtom m_ruleBase;
-	multimap<TSyntaxRuleAtom, Rule> m_rulesMap;
+	SyntaxRuleAtom m_ruleBase;
+	multimap<SyntaxRuleAtom, Rule> m_rulesMap;
 public:
 	SyntaxGrammar();
-	SyntaxGrammar(const TSyntaxRuleAtom& i_ruleBase);
+	SyntaxGrammar(const SyntaxRuleAtom& i_ruleBase);
 	virtual ~SyntaxGrammar();
 
-	SyntaxGrammar& InsertRule(const TSyntaxRuleAtom& i_leftPart, const vector<TSyntaxRuleAtom>& i_rightPart, Rule::TRuleNumber i_rulNum);
-	SyntaxGrammar& operator()(const TSyntaxRuleAtom& i_leftPart, const vector<TSyntaxRuleAtom>& i_rightPart);
-	SyntaxGrammar& operator()(const TSyntaxRuleAtom& i_leftPart, const vector<TSyntaxRuleAtom>& i_rightPart, Rule::TRuleNumber i_ruleNum);
+	SyntaxGrammar& InsertRule(const SyntaxRuleAtom& i_leftPart, const vector<SyntaxRuleAtom>& i_rightPart, Rule::TRuleNumber i_rulNum);
+	SyntaxGrammar& operator()(const SyntaxRuleAtom& i_leftPart, const vector<SyntaxRuleAtom>& i_rightPart);
+	SyntaxGrammar& operator()(const SyntaxRuleAtom& i_leftPart, const vector<SyntaxRuleAtom>& i_rightPart, Rule::TRuleNumber i_ruleNum);
 
-	vector<Rule> getMatchedRules(const TSyntaxRuleAtom& i_leftPart)const;
-	TSyntaxRuleAtom getRuleBase()const {return m_ruleBase;}
+	vector<Rule> getMatchedRules(const SyntaxRuleAtom& i_leftPart)const;
+	SyntaxRuleAtom getRuleBase()const {return m_ruleBase;}
 };
 
 #endif /* SRC_SYNTAXGRAMMAR_H_ */

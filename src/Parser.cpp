@@ -25,7 +25,7 @@ Parser::~Parser() {
 }
 
 void Parser::Configurate(){
-	TSyntaxRuleAtom
+	SyntaxRuleAtom
 		nProgram{"program"},
 		nModule{"module"},
 		nModuleHeading{"moduleheading"},
@@ -106,7 +106,7 @@ void Parser::Configurate(){
 		nMbSectionList{"mbsectionlist"},
 		nFormalParameters{"formalparameters"};
 
-	TSyntaxRuleAtom
+	SyntaxRuleAtom
 		tDot{TToken::TTokenClass::_dot},
 		tComma{TToken::TTokenClass::_comma},
 		tColom{TToken::TTokenClass::_colom},
@@ -310,7 +310,7 @@ Parser::ParseTree Parser::Parse(const vector<TToken>& i_input){
 	m_input = i_input;
 	return Parser::Parse();
 }
-bool Parser::Parse(const TSyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
+bool Parser::Parse(const SyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 	if (i_syntaxAtom.IsTerminal()){
 		return CheckNextTerminal(i_syntaxAtom.getTerminal());
 	}
@@ -367,7 +367,7 @@ bool Parser::Parse(const TSyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 		cout << matchedRule << endl;
 	else
 		cout << "none" <<endl;
-//
+
 	return matchedRule.IsInit();
 }
 bool Parser::CheckNextTerminal(const TToken::TTokenClass& i_tokenClassToBeCompared){

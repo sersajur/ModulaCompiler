@@ -5,44 +5,44 @@
  *      Author: sersajur
  */
 
-#include "TSyntaxRuleAtom.h"
+#include "SyntaxRuleAtom.h"
 
-TSyntaxRuleAtom::TSyntaxRuleAtom():
+SyntaxRuleAtom::SyntaxRuleAtom():
 m_isTerminalFlag{false},
 m_terminal{TToken::TTokenClass(-1)}{
 
 }
 
-TSyntaxRuleAtom::~TSyntaxRuleAtom(){
+SyntaxRuleAtom::~SyntaxRuleAtom(){
 
 }
 
-TSyntaxRuleAtom::TSyntaxRuleAtom(const TToken::TTokenClass& i_tokenClass):
+SyntaxRuleAtom::SyntaxRuleAtom(const TToken::TTokenClass& i_tokenClass):
 m_isTerminalFlag{true},
 m_terminal{i_tokenClass}{
 
 }
-TSyntaxRuleAtom::TSyntaxRuleAtom(const string& i_ntermName):
+SyntaxRuleAtom::SyntaxRuleAtom(const string& i_ntermName):
 m_isTerminalFlag{false},
 m_nterminal{i_ntermName},
 m_terminal{TToken::TTokenClass(-1)}{
 
 }
-TSyntaxRuleAtom::TSyntaxRuleAtom(const char* i_ntermName):
+SyntaxRuleAtom::SyntaxRuleAtom(const char* i_ntermName):
 m_isTerminalFlag{false},
 m_nterminal{i_ntermName},
 m_terminal{TToken::TTokenClass(-1)}{
 
 }
-TSyntaxRuleAtom::TSyntaxRuleAtom(const TToken& i_token):
+SyntaxRuleAtom::SyntaxRuleAtom(const TToken& i_token):
 m_isTerminalFlag{true},
 m_terminal{i_token.getClass()}{
 
 }
-bool TSyntaxRuleAtom::operator<(const TSyntaxRuleAtom& i_rOperand)const{
+bool SyntaxRuleAtom::operator<(const SyntaxRuleAtom& i_rOperand)const{
 	return this->getNterminal() < i_rOperand.getNterminal();
 }
-ostream& operator<<(ostream& io_os, const TSyntaxRuleAtom& i_synAtom){
+ostream& operator<<(ostream& io_os, const SyntaxRuleAtom& i_synAtom){
 	if (i_synAtom.IsTerminal())
 		io_os << TToken::ClassToString(i_synAtom.getTerminal());
 	else if (!i_synAtom.getNterminal().empty())
