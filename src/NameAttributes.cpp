@@ -6,15 +6,14 @@
  */
 #include "NameAttributes.h"
 
-
-const std::map<NameAttributes::NameType, string> NameAttributes::NameTypeString{
+const std::map<NameAttributes::NameType, std::string> NameAttributes::NameTypeString{
 	{NameAttributes::NameType::Module, "Module"},
 	{NameAttributes::NameType::Procedure, "Procedure"},
 	{NameAttributes::NameType::Array, "Array"},
 	{NameAttributes::NameType::Variable, "Variable"},
 	{NameAttributes::NameType::Constant, "Constant"}
 };
-const std::map<NameAttributes::Type, string> NameAttributes::TypeString{
+const std::map<NameAttributes::Type, std::string> NameAttributes::TypeString{
 	{NameAttributes::Type::Boolean, "Boolean"},
 	{NameAttributes::Type::Integer, "Integer"},
 	{NameAttributes::Type::Real, "Real"},
@@ -24,18 +23,18 @@ const std::map<NameAttributes::Type, string> NameAttributes::TypeString{
 };
 
 
-string ModuleAttributes::getPrintableText() const{
+std::string ModuleAttributes::getPrintableText() const{
 	return NameAttributes::NameTypeString.find(getNameType())->second;
 }
-string ProcedureAttributes::getPrintableText() const{
+std::string ProcedureAttributes::getPrintableText() const{
 	return NameAttributes::NameTypeString.find(getNameType())->second;
 }
-string ArrayAttributes::getPrintableText() const{
+std::string ArrayAttributes::getPrintableText() const{
 	return NameAttributes::NameTypeString.find(getNameType())->second;
 }
-string VariableAttributes::getPrintableText() const{
+std::string VariableAttributes::getPrintableText() const{
 	return NameAttributes::NameTypeString.find(getNameType())->second;
 }
-string ConstantAttributes::getPrintableText() const{
+std::string ConstantAttributes::getPrintableText() const{
 	return NameAttributes::NameTypeString.find(getNameType())->second;
 }

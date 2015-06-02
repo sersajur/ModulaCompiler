@@ -578,3 +578,5 @@ Syntax analyze:
 Semantic analyze:
 Block	IdName	Attributes	
 	Main:	Module
+Code generation:
+This is code stub for byte-code printing

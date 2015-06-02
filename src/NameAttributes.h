@@ -13,10 +13,6 @@
 #include <map>
 #include "TToken.h"
 
-using std::vector;
-using std::string;
-using std::map;
-
 class NameAttributes{
 
 public:
@@ -30,8 +26,8 @@ public:
 	virtual std::string getPrintableText() const = 0;
 	virtual ~NameAttributes(){};
 protected:
-	static const map<NameType, string> NameTypeString;
-	static const map<Type, string> TypeString;
+	static const std::map<NameType, std::string> NameTypeString;
+	static const std::map<Type, std::string> TypeString;
 };
 
 class ModuleAttributes: public NameAttributes{
@@ -39,7 +35,7 @@ public:
 	ModuleAttributes(){};
 	virtual ~ModuleAttributes(){};
 	NameAttributes::NameType getNameType() const override {return NameAttributes::NameType::Module;}
-	string getPrintableText() const override;
+	std::string getPrintableText() const override;
 };
 
 class ProcedureAttributes: public NameAttributes{
@@ -48,12 +44,12 @@ public:
 	virtual ~ProcedureAttributes(){};
 	NameAttributes::NameType getNameType() const override {return NameAttributes::NameType::Procedure;}
 public:
-	ProcedureAttributes(const vector<NameAttributes::Type>& i_inputParamsType, const NameAttributes::Type& i_returningType = NameAttributes::Type::Void):
+	ProcedureAttributes(const std::vector<NameAttributes::Type>& i_inputParamsType, const NameAttributes::Type& i_returningType = NameAttributes::Type::Void):
 		m_returningtype{i_returningType}, m_inputParametersType{i_inputParamsType} {}
-	string getPrintableText() const override;
+	std::string getPrintableText() const override;
 private:
 	NameAttributes::Type m_returningtype;
-	vector<NameAttributes::Type> m_inputParametersType;
+	std::vector<NameAttributes::Type> m_inputParametersType;
 
 };
 
@@ -67,12 +63,12 @@ public:
 		unsigned low_edge;
 		unsigned high_edge;
 	};
-	ArrayAttributes(const NameAttributes::Type& i_type, const vector<TDimBoundary>& i_dimBoundaties):
+	ArrayAttributes(const NameAttributes::Type& i_type, const std::vector<TDimBoundary>& i_dimBoundaties):
 		m_type{i_type}, m_dimBoundaries{i_dimBoundaties} {}
-	string getPrintableText() const override;
+	std::string getPrintableText() const override;
 private:
 	NameAttributes::Type m_type;
-	vector<TDimBoundary> m_dimBoundaries;
+	std::vector<TDimBoundary> m_dimBoundaries;
 };
 
 class VariableAttributes: public NameAttributes{
@@ -83,7 +79,7 @@ public:
 public:
 	VariableAttributes(const NameAttributes::Type& i_type):
 		m_type{i_type} {}
-	string getPrintableText() const override;
+	std::string getPrintableText() const override;
 private:
 	NameAttributes::Type m_type;
 };
@@ -96,7 +92,7 @@ public:
 public:
 	ConstantAttributes(const NameAttributes::Type& i_type, const TToken::TTokenValue& i_value):
 		m_type{i_type}, m_value{i_value} {}
-	string getPrintableText() const override;
+	std::string getPrintableText() const override;
 private:
 	NameAttributes::Type m_type;
 	TToken::TTokenValue m_value;

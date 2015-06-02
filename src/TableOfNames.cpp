@@ -36,10 +36,10 @@ const TableOfNames::TRecord TableOfNames::getRecord(const TNameId& i_nameId) con
 	return {i_nameId, it->second};
 }
 void TableOfNames::Insert(const TRecord& i_record){
-	NameAttributes* p_newAttribute;
+	NameAttributes* p_newAttribute{};
 	switch (i_record.attributes->getNameType()){
 	case NameAttributes::NameType::Module:
-		p_newAttribute = new ModuleAttributes(*dynamic_cast<ModuleAttributes*>(i_record.attributes));
+		p_newAttribute = new ModuleAttributes{*dynamic_cast<ModuleAttributes*>(i_record.attributes)};
 		break;
 	case NameAttributes::NameType::Procedure:
 		p_newAttribute = new ProcedureAttributes{*(dynamic_cast<ProcedureAttributes*>(i_record.attributes))};

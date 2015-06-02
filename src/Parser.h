@@ -21,9 +21,9 @@
 class Parser {
 private:
 	SyntaxGrammar m_grammar;
-	vector<TToken> m_input;
+	std::vector<TToken> m_input;
 
-	vector<TToken>::iterator m_currentInputTerminal, m_firstUnrecognized;
+	std::vector<TToken>::iterator m_currentInputTerminal, m_firstUnrecognized;
 
 	bool CheckNextTerminal(const TToken::TTokenClass& i_tokenClassToBeCompared);
 	bool Parse(const SyntaxRuleAtom i_ruleAtom, ParseTree& io_pareTree);
@@ -33,10 +33,10 @@ public:
 	Parser(const SyntaxGrammar& i_grammar);
 	virtual ~Parser();
 
-	void setInput(const vector<TToken>& i_input);
+	void setInput(const std::vector<TToken>& i_input);
 	void Configurate(); //TODO: It should be configured by outside grammar
 	ParseTree Parse();
-	ParseTree Parse(const vector<TToken>& i_input);
+	ParseTree Parse(const std::vector<TToken>& i_input);
 
 //	static void PrintTree(ostream& i_os, const ParseTree& i_parseTree);
 };

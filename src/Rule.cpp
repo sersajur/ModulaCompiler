@@ -7,7 +7,7 @@
 
 #include "Rule.h"
 
-Rule::Rule(TRuleNumber i_num, const SyntaxRuleAtom& i_leftPart, const vector<SyntaxRuleAtom>& i_rightPart):
+Rule::Rule(TRuleNumber i_num, const SyntaxRuleAtom& i_leftPart, const std::vector<SyntaxRuleAtom>& i_rightPart):
 m_isInit{true},
 m_number{i_num},
 m_leftPart{i_leftPart},
@@ -17,8 +17,8 @@ m_rightPart{i_rightPart}{
 Rule::~Rule(){
 
 }
-Rule::operator pair<SyntaxRuleAtom, Rule>(){
-	return pair<SyntaxRuleAtom, Rule>{m_leftPart, *this};
+Rule::operator std::pair<SyntaxRuleAtom, Rule>(){
+	return std::pair<SyntaxRuleAtom, Rule>{m_leftPart, *this};
 }
 ostream& operator<<(ostream& io_os, const Rule& i_rule){
 	io_os << i_rule.m_number << ": "

@@ -12,10 +12,6 @@
 #include <map>
 #include <iostream>
 
-using std::string;
-using std::map;
-using std::ostream;
-
 #define TOKEN_CLASS(x) _ ## x
 
 class TToken{
@@ -77,8 +73,8 @@ public:
 
 private:
 
-	static const  map<string, TTokenClass> ReservedWords;
-	static const  map<TTokenClass, string> ClassString;
+	static const  std::map<std::string, TTokenClass> ReservedWords;
+	static const  std::map<TTokenClass, std::string> ClassString;
 
 public:
 	union TTokenValue{
@@ -99,24 +95,24 @@ public:
 	};
 
 	TToken();
-	TToken(const TTokenClass&, const string&,  const TPosition&);
+	TToken(const TTokenClass&, const std::string&,  const TPosition&);
 	virtual ~TToken();
 
 	const TTokenClass getClass()const { return m_class; }
 	const TTokenValue getValue()const { return m_value; }
-	const string getLexeme()const { return m_lexeme; }
+	const std::string getLexeme()const { return m_lexeme; }
 	const TPosition getPosition()const { return m_pos; }
 
-	friend ostream& operator<<(ostream& i_os, const TToken& i_token);
+	friend std::ostream& operator<<(std::ostream& i_os, const TToken& i_token);
 	//Debug
-	static string ClassToString(const TTokenClass& i_class){
+	static std::string ClassToString(const TTokenClass& i_class){
 		return ClassString.find(i_class)->second;
 	}
 private:
 
 	TTokenClass m_class;
 	TTokenValue m_value;
-	string m_lexeme;
+	std::string m_lexeme;
 	TPosition m_pos;
 };
 

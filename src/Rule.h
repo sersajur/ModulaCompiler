@@ -13,21 +13,17 @@
 
 #include "SyntaxRuleAtom.h"
 
-using std::vector;
-using std::pair;
-using std::ostream;
-
 class Rule {
 public:
 	typedef unsigned TRuleNumber;
-	typedef vector<SyntaxRuleAtom> TRightPart;
+	typedef std::vector<SyntaxRuleAtom> TRightPart;
 
 	Rule():
 		m_isInit{false}, m_number{0}
 	{}
-	Rule(TRuleNumber i_num, const SyntaxRuleAtom& i_leftPart, const vector<SyntaxRuleAtom>& i_rightPart);
+	Rule(TRuleNumber i_num, const SyntaxRuleAtom& i_leftPart, const std::vector<SyntaxRuleAtom>& i_rightPart);
 	virtual ~Rule();
-	operator pair<SyntaxRuleAtom, Rule>();
+	operator std::pair<SyntaxRuleAtom, Rule>();
 	TRightPart getRightPart()const {return m_rightPart;}
 	bool IsInit()const {return m_isInit;}
 	bool IsLambda() const {return m_isInit && m_rightPart.empty();}

@@ -32,7 +32,7 @@ private:
 public:
 	TableOfNames();
 	TableOfNames(const TableOfNames& i_srcTable);
-	TableOfNames& operator=(const TableOfNames&);
+	TableOfNames& operator=(const TableOfNames& i_srcTable);
 	virtual ~TableOfNames(); //don't forget about memory free;
 
 	bool IsDeclared(const TNameId& i_id) const; // weather the name is declared

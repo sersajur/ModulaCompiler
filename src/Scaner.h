@@ -15,9 +15,6 @@
 #include "TTokenExtractor.h"
 #include "TOneSymbolExtractor.h"
 
-using std::string;
-
-
 class Scaner {
 private:
 	enum class TCntStates{
@@ -65,7 +62,7 @@ private:
 		f_eof,
 	};
 #define MAKE_STATE_CLASS( x ) { TTokenExtractState::f_ ## x, TToken::TTokenClass::_ ## x }
-	const map<const TTokenExtractState, const TToken::TTokenClass> StateClass{
+	const std::map<const TTokenExtractState, const TToken::TTokenClass> StateClass{
 		MAKE_STATE_CLASS(intval),
 		MAKE_STATE_CLASS(realval),
 		MAKE_STATE_CLASS(strval),
@@ -93,13 +90,13 @@ public:
 	Scaner();
 	virtual ~Scaner();
 
-	void Configurate(const string& i_inputStr);
-	void Reset(const string& i_inputStr);
+	void Configurate(const std::string& i_inputStr);
+	void Reset(const std::string& i_inputStr);
 	TToken getNextToken();
 	bool IsThatAll() const;
 private:
 	bool m_lastTokenExtracted;
-	string m_srcString;
+	std::string m_srcString;
 	TPositionCounter<TCntStates> m_posCounter;
 	TOneSymbolExtractor<TCommentStates> m_commentFilter;
 	TOneSymbolExtractor<TWhiteSpaceStates> m_whiteSpaceFilter;

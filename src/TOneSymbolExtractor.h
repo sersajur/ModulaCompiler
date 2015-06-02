@@ -11,8 +11,6 @@
 #include <vector>
 #include "TLexicalException.h"
 
-using std::vector;
-
 template <class N>
 class TOneSymbolExtractor: public TStringConveyor, public TFiniteStateMachine<char, N> {
 public:
@@ -20,7 +18,7 @@ public:
 		FirstFinalState, LastFinalState
 	};
 	TOneSymbolExtractor(TExtractCondition i_cond = TExtractCondition::FirstFinalState);
-	TOneSymbolExtractor(const N& i_startState, const set<N> i_finalStates, TExtractCondition i_cond = TExtractCondition::FirstFinalState);
+	TOneSymbolExtractor(const N& i_startState, const std::set<N> i_finalStates, TExtractCondition i_cond = TExtractCondition::FirstFinalState);
 	virtual ~TOneSymbolExtractor(){};
 
 	void setExtractCondition(const TExtractCondition& i_cond){m_extractCondition = i_cond;}
@@ -36,7 +34,7 @@ m_extractCondition{i_cond}{
 }
 
 template <class N>
-TOneSymbolExtractor<N>::TOneSymbolExtractor(const N& i_startState, const set<N> i_finalStates, TExtractCondition i_cond):
+TOneSymbolExtractor<N>::TOneSymbolExtractor(const N& i_startState, const std::set<N> i_finalStates, TExtractCondition i_cond):
 TStringConveyor{},
 TFiniteStateMachine<char, N>{i_startState, i_finalStates},
 m_extractCondition{i_cond}{
@@ -48,7 +46,7 @@ char TOneSymbolExtractor<N>::ProcessSymbol(char i_symbol){
 	if (!IsPassAForward())
 		return TStringConveyor::ProcessSymbol(i_symbol);
 
-	vector<char> symbolBuffer = {i_symbol};
+	std::vector<char> symbolBuffer = {i_symbol};
 	switch (m_extractCondition){
 	case TExtractCondition::FirstFinalState:
 		while (!this->Transit(symbolBuffer.back()).IsMachineAccept() && this->IsMachineWork()){

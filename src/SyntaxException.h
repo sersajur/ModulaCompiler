@@ -12,12 +12,10 @@
 
 #include "CompileException.h"
 
-using std::string;
-
 class SyntaxException: public CompileException {
 public:
-	SyntaxException(const string& i_reason);
-	SyntaxException(const unsigned i_line, const unsigned i_column, const string& i_errNterminal, const char* i_reason);
+	SyntaxException(const std::string& i_reason);
+	SyntaxException(const unsigned i_line, const unsigned i_column, const std::string& i_errNterminal, const char* i_reason);
 	SyntaxException(const TToken& i_problemToken, const char* i_reason);
 	virtual ~SyntaxException();
 };

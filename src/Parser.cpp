@@ -288,7 +288,7 @@ void Parser::Configurate(){
 	(nMbElse,    {tElse, nStatementSequence})
 	(nForStatement, {tFor, nVariable, tEq, nExpression, tColom, nExpression, nStatementSequence, tEnd});
 }
-void Parser::setInput(const vector<TToken>& i_input){
+void Parser::setInput(const std::vector<TToken>& i_input){
 	m_input = i_input;
 }
 ParseTree  Parser::Parse(){
@@ -306,7 +306,7 @@ ParseTree  Parser::Parse(){
 		throw SyntaxException(*m_currentInputTerminal, "There is no matched rules for tokens after this one");
 	return o_parseTree;
 }
-ParseTree Parser::Parse(const vector<TToken>& i_input){
+ParseTree Parser::Parse(const std::vector<TToken>& i_input){
 	m_input = i_input;
 	return Parser::Parse();
 }
@@ -316,7 +316,7 @@ bool Parser::Parse(const SyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 	}
 
 	Rule matchedRule{};
-	vector<ParseTree> childNodes{};
+	std::vector<ParseTree> childNodes{};
 	auto savedCurrentPosition = m_currentInputTerminal;
 	auto ruleCandidates = m_grammar.getMatchedRules(i_syntaxAtom);
 	for (auto& currentRule : ruleCandidates){ // Loop possible rules

@@ -96,12 +96,16 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 			it.DefinitionProcess(io_tableOfNames, i_currentBlock);
 	}
 }
-void ParseTree::UsageProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){
+void ParseTree::UsageCheckProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){
 
 }
 TableOfNames ParseTree::SemanticAnalyze(){
-	TableOfNames tableOfNames;
+	TableOfNames tableOfNames{};
 	DefinitionProcess(tableOfNames);
-	UsageProcess(tableOfNames);
+	UsageCheckProcess(tableOfNames);
 	return tableOfNames;
+}
+ByteCode ParseTree::GenerateCode(const TableOfNames& i_tableOfNames){
+	//code stub
+	return ByteCode{};
 }

@@ -8,7 +8,7 @@
 #include "TToken.h"
 
 #define RESERVED_WORD(x) {#x, TTokenClass::_ ## x}
-const  map<string, TToken::TTokenClass> TToken::ReservedWords{
+const  std::map<std::string, TToken::TTokenClass> TToken::ReservedWords{
 		RESERVED_WORD(begin),
 		RESERVED_WORD(end),
 		RESERVED_WORD(if),
@@ -35,7 +35,7 @@ const  map<string, TToken::TTokenClass> TToken::ReservedWords{
 };
 
 #define CLASS_STRING(x) {TTokenClass::_ ## x, #x}
-const  map<TToken::TTokenClass, string> TToken::ClassString{
+const  std::map<TToken::TTokenClass, std::string> TToken::ClassString{
 		CLASS_STRING(boolval),
 		CLASS_STRING(intval),
 		CLASS_STRING(realval),
@@ -87,7 +87,7 @@ TToken::TToken():
 
 }
 
-TToken::TToken(const TTokenClass& i_class, const string& i_lexeme, const TPosition& i_pos):
+TToken::TToken(const TTokenClass& i_class, const std::string& i_lexeme, const TPosition& i_pos):
 		m_class(i_class), m_lexeme(i_lexeme), m_pos(i_pos) {
 
 	if (TTokenClass::_id == i_class){
@@ -103,9 +103,9 @@ TToken::~TToken() {
 
 }
 
-ostream& operator<<(ostream& i_os, const TToken& i_token){
+std::ostream& operator<<(std::ostream& i_os, const TToken& i_token){
 
-	string lexeme = ((i_token.m_class == TToken::TTokenClass::_eof) ? "" : i_token.m_lexeme);
+	std::string lexeme = ((i_token.m_class == TToken::TTokenClass::_eof) ? "" : i_token.m_lexeme);
 	i_os	<< i_token.m_pos.line << ':'
 			<< i_token.m_pos.column << '\t'
 			<< TToken::ClassString.find(i_token.m_class)->second << '\t'

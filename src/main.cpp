@@ -18,6 +18,7 @@
 #include "ParseTree.h"
 #include "TableOfNames.h"
 #include "SemanticException.h"
+#include "ByteCode.h"
 
 using std::cout;
 using std::endl;
@@ -75,6 +76,16 @@ int main(int argn, const char* argv[]){
 		TableOfNames tableOfNames = parseTree.SemanticAnalyze();
 		outFile << "Semantic analyze:" << endl;
 		outFile << tableOfNames;
+
+		//TODO: Paul: Code generation:
+		// 1. Create class "ByteCode" to contain code within triads;
+		// 2. Implement method ByteCode ParseTree::GenerateCode(const TableOfNames& i_table);
+		//
+		//	code stub:
+
+		outFile << "Code generation:" << endl;
+		ByteCode byteCode = parseTree.GenerateCode(tableOfNames);
+		outFile << byteCode << endl;
 
 	}
 	catch(TLexicalException& e){

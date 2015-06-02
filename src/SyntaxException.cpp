@@ -10,13 +10,13 @@
 
 using std::ostringstream;
 
-SyntaxException::SyntaxException(const string& i_reason):
+SyntaxException::SyntaxException(const std::string& i_reason):
 CompileException(i_reason){
 
 }
 
 SyntaxException::SyntaxException
-(const unsigned i_line, const unsigned i_column, const string& i_errLexeme, const char* i_reason):
+(const unsigned i_line, const unsigned i_column, const std::string& i_errLexeme, const char* i_reason):
 CompileException{i_line, i_column, i_errLexeme, i_reason}{
 
 }
