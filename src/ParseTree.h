@@ -21,8 +21,11 @@ private:
 	Rule m_rule;
 	std::vector<ParseTree>  m_childRules;
 private:
+
 	std::ostream& FormatedPrint(std::ostream& io_os, const unsigned i_tabCounter) const;
 	void AssociateWithInput(std::vector<TToken>::const_iterator& io_it);
+	bool operator==(const char* i_nterminalValue)const{return (m_rule.m_leftPart.getNterminal()==i_nterminalValue);}
+	void InsertToTableIfUndefinedOrThrowException(TableOfNames& io_tableOfNames, TableOfNames::TRecord i_record, const TToken& i_token)const;
 	void DefinitionProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock = "");
 	void UsageCheckProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock = "");
 public:

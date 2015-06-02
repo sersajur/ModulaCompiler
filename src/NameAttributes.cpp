@@ -21,7 +21,33 @@ const std::map<NameAttributes::Type, std::string> NameAttributes::TypeString{
 	{NameAttributes::Type::String, "String"},
 	{NameAttributes::Type::Void, "Void"}
 };
-
+NameAttributes::Type NameAttributes::TokenTypeToType(const TToken::TTokenClass& i_v){
+	NameAttributes::Type type{};
+	switch(i_v){
+	case TToken::TTokenClass::_Boolean:
+	case TToken::TTokenClass::_boolval:
+		type = NameAttributes::Type::Boolean;
+		break;
+	case TToken::TTokenClass::_strval:
+		type = NameAttributes::Type::String;
+		break;
+	case TToken::TTokenClass::_intval:
+	case TToken::TTokenClass::_integer:
+		type = NameAttributes::Type::Integer;
+		break;
+	case TToken::TTokenClass::_realval:
+	case TToken::TTokenClass::_real:
+		type = NameAttributes::Type::Real;
+		break;
+	case TToken::TTokenClass::_char:
+		type = NameAttributes::Type::Char;
+		break;
+	default:
+		type = NameAttributes::Type::Void;
+		break;
+	}
+	return type;
+}
 
 std::string ModuleAttributes::getPrintableText() const{
 	return NameAttributes::NameTypeString.find(getNameType())->second;

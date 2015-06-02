@@ -14,7 +14,6 @@
 #include "TToken.h"
 
 class NameAttributes{
-
 public:
 	enum class NameType{
 		Module, Procedure, Array, Variable, Constant
@@ -25,6 +24,8 @@ public:
 	virtual NameType getNameType() const = 0;
 	virtual std::string getPrintableText() const = 0;
 	virtual ~NameAttributes(){};
+
+	static Type TokenTypeToType(const TToken::TTokenClass& i_v);
 protected:
 	static const std::map<NameType, std::string> NameTypeString;
 	static const std::map<Type, std::string> TypeString;

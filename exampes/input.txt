@@ -1,7 +1,7 @@
 module Main; 
 	var g, f: integer;
 		arrv: array 1:15,1:20 of real;
-	const a = 6;
+	const a = -6;
 	var jj:Boolean;
 
 	procedure My(*comment*)Proc(var a, b:integer; const k:Boolean)

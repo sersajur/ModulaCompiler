@@ -68,32 +68,92 @@ void ParseTree::TestPrint(std::ostream& o_os)const{
 			subtree++;
 		}
 }
+void ParseTree::InsertToTableIfUndefinedOrThrowException(TableOfNames& io_tableOfNames, TableOfNames::TRecord i_record, const TToken& i_token)const{
+	if (io_tableOfNames.IsDeclared(i_record.ID))
+		throw SemanticException(i_token, "Already declared name");
+	else{
+		io_tableOfNames.Insert(i_record);
+	}
+}
 void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){
-	if (m_rule.m_leftPart.getNterminal() == "module"){
+
+
+	if (m_rule.m_leftPart.getNterminal() == "program"){
+		m_childRules[0].DefinitionProcess(io_tableOfNames, i_currentBlock);
+	}
+	else if (*this == "module"){
 		TToken idToken = m_childRules[0].m_rule.getRightPart()[1].getAssociatedToken();
 		TableOfNames::TNameId id{idToken.getLexeme(), i_currentBlock};
-		if (io_tableOfNames.IsDeclared(id))
-			throw SemanticException(idToken, "Already declared name");
-		else{
-			ModuleAttributes attributes{};
-			io_tableOfNames.Insert({id, &attributes});
+		ModuleAttributes attributes{};
+		InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
+		//to declarationparts (if it exists):
+		m_childRules[1].m_childRules[0].DefinitionProcess(io_tableOfNames, id.name);
+	}
+	else if (*this == "declarationparts"){
+		if (m_childRules[0].m_childRules[0] == "proceduredeclaration")
+			m_childRules[0].m_childRules[0].DefinitionProcess(io_tableOfNames, i_currentBlock);
+		else if (!m_childRules[0].m_childRules[0].m_rule.IsLambda())
+			m_childRules[0].m_childRules[0].m_childRules[0].DefinitionProcess(io_tableOfNames, i_currentBlock);
+		//to next declarationparts
+		if (!m_childRules[1].m_rule.IsLambda())
+			m_childRules[1].m_childRules[0].DefinitionProcess(io_tableOfNames, i_currentBlock);
+	}
+	else if ((*this == "constantdeclarations") || (*this == "variabledeclarations")){
+		m_childRules[0].DefinitionProcess(io_tableOfNames, i_currentBlock);
+		//to next constantdeclarations (variabledeclarations)
+		if (!m_childRules[1].m_rule.IsLambda())
+			m_childRules[1].m_childRules[0].DefinitionProcess(io_tableOfNames, i_currentBlock);
+	}
+	else if (*this == "constantdeclaration"){
+		TToken idToken = m_rule.getRightPart()[0].getAssociatedToken();
+		TableOfNames::TNameId id{idToken.getLexeme(), i_currentBlock};
+		TToken valueToken{};
+		bool isSign{false};
+		int sign{1};
+		if (m_childRules[0].m_childRules[0] == "unsignedconstant"){
+			auto terminal = (m_childRules[0].m_childRules[0].m_childRules.empty() ? m_childRules[0].m_childRules[0].m_rule.getRightPart()[0] : m_childRules[0].m_childRules[0].m_childRules[0].m_rule.getRightPart()[0]);
+			valueToken = terminal.getAssociatedToken();
 		}
-		m_childRules[1].DefinitionProcess(io_tableOfNames, id.name); //to block
+		else{
+			isSign = true;
+			auto terminal = m_childRules[0].m_childRules[1].m_rule.getRightPart()[0];
+			valueToken = terminal.getAssociatedToken();
+			terminal = m_childRules[0].m_childRules[0].m_rule.getRightPart()[0];
+			if (terminal.getAssociatedToken().getClass() == TToken::TTokenClass::_sub)
+				sign = -1;
+		}
+		TToken::TTokenValue value{valueToken.getValue()};
+		NameAttributes::Type type = NameAttributes::TokenTypeToType(valueToken.getClass());
+		if (isSign){
+			if (type == NameAttributes::Type::Real)
+				value.asReal *= float(sign);
+			else
+				value.asInt *= sign;
+		}
+		ConstantAttributes attributes{type, value};
+		InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
 	}
-	else if (m_rule.m_leftPart.getNterminal() == "declarationparts"){
+	else if (*this == "variabledeclaration"){
+		if (m_childRules[1].m_childRules[0] == "basetype"){ //variable
+			auto tokenClass = m_childRules[1].m_childRules[0].m_rule.getRightPart()[0].getTerminal();
+			NameAttributes::Type type{NameAttributes::TokenTypeToType(tokenClass)};
+			VariableAttributes attributes{type};
+			ParseTree subtree = *this;
+			do{
+				subtree = subtree.m_childRules[0];
+				TToken idToken = subtree.m_rule.getRightPart()[0].getAssociatedToken();
+				TableOfNames::TNameId id{idToken.getLexeme(), i_currentBlock};
+				InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
+				subtree = subtree.m_childRules[0];
+			}while(!subtree.m_rule.IsLambda());
 
+		}
+		else{ // array
+
+		}
 	}
-	else if (m_rule.m_leftPart.getNterminal() == "proceduredeclarationparts"){
-	}
-	else if (m_rule.m_leftPart.getNterminal() == "variabledeclarations"){
-	}
-	else if (m_rule.m_leftPart.getNterminal() == "constantdeclarations"){
-	}
-	else if (m_rule.m_leftPart.getNterminal() == "statementpart"){
-	}
-	else{
-		for (auto& it : m_childRules)
-			it.DefinitionProcess(io_tableOfNames, i_currentBlock);
+	else if (*this == "proceduredeclaration"){
+
 	}
 }
 void ParseTree::UsageCheckProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){

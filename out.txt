@@ -25,9 +25,10 @@ Lexical analyze:
 3:32	const	const
 4:6	id	a
 4:8	eq	=
-4:10	intval	6
-4:12	semicolom	;
-4:13	var	var
+4:10	sub	-
+4:12	intval	6
+4:13	semicolom	;
+4:14	var	var
 5:4	id	jj
 5:7	colom	:
 5:8	Boolean	Boolean
@@ -192,9 +193,9 @@ Syntax analyze:
 							15: <fctconstantdeclarations>::=<constantdeclarations> 
 								19: <constantdeclarations>::=<constantdeclaration> semicolom <fctconstantdeclaration> 
 									26: <constantdeclaration>::=id eq <constant> 
-										27: <constant>::=<unsignedconstant> 
-											30: <unsignedconstant>::=<number> 
-												34: <number>::=intval 
+										28: <constant>::=<sign> <number> 
+											33: <sign>::=sub 
+											34: <number>::=intval 
 									21: <fctconstantdeclaration>::=Lambda
 						10: <fctdeclarationpart>::=<declarationparts> 
 							9: <declarationparts>::=<declarationpart> <fctdeclarationpart> 
@@ -578,5 +579,9 @@ Syntax analyze:
 Semantic analyze:
 Block	IdName	Attributes	
 	Main:	Module
+Main	a:	Constant
+Main	f:	Variable
+Main	g:	Variable
+Main	jj:	Variable
 Code generation:
 This is code stub for byte-code printing
