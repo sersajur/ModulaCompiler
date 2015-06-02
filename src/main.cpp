@@ -16,6 +16,8 @@
 #include "Parser.h"
 #include "SyntaxException.h"
 #include "ParseTree.h"
+#include "TableOfNames.h"
+#include "SemanticException.h"
 
 using std::cout;
 using std::endl;
@@ -59,15 +61,21 @@ int main(int argn, const char* argv[]){
 		outFile << "Lexical analyze:" << endl;
 		for (auto it = tokens.begin(); it != tokens.end(); it++)
 			outFile << *it << endl;
+
 		//Syntax analyze
 		tokens.pop_back();
 		parser.setInput(tokens);
 		ParseTree parseTree = parser.Parse();
 		outFile << "Syntax analyze:" << endl;
 		outFile << parseTree;
+
 		//Semantic analyze
 		parseTree.AssociateWithInput(tokens);
-		parseTree.TestPrint(outFile);
+		//parseTree.TestPrint(outFile);
+		TableOfNames tableOfNames = parseTree.SemanticAnalyze();
+		outFile << "Semantic analyze:" << endl;
+		outFile << tableOfNames;
+
 	}
 	catch(TLexicalException& e){
 		outFile << "Lexical error:" << endl;
@@ -75,6 +83,10 @@ int main(int argn, const char* argv[]){
 	}
 	catch(SyntaxException& e){
 		outFile << "Syntax error:" << endl;
+		outFile << e.what() << endl;
+	}
+	catch(SemanticException& e){
+		outFile << "Semantic error:" << endl;
 		outFile << e.what() << endl;
 	}
 	catch(...){

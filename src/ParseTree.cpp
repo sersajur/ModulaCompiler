@@ -5,6 +5,8 @@
  *      Author: sersajur
  */
 
+
+#include "SemanticException.h"
 #include "ParseTree.h"
 
 using std::ostream;
@@ -55,6 +57,7 @@ ostream& ParseTree::FormatedPrint(ostream& io_os, const unsigned i_tabCounter) c
 ostream& operator<<(ostream& io_os, const ParseTree& i_parseTree){
 	return i_parseTree.FormatedPrint(io_os, 0);
 }
+
 void ParseTree::TestPrint(std::ostream& o_os)const{
 	auto subtree = m_childRules.begin();
 	for (auto& it : m_rule.m_rightPart)
@@ -64,5 +67,41 @@ void ParseTree::TestPrint(std::ostream& o_os)const{
 			subtree->TestPrint(o_os);
 			subtree++;
 		}
+}
+void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){
+	if (m_rule.m_leftPart.getNterminal() == "module"){
+		TToken idToken = m_childRules[0].m_rule.getRightPart()[1].getAssociatedToken();
+		TableOfNames::TNameId id{idToken.getLexeme(), i_currentBlock};
+		if (io_tableOfNames.IsDeclared(id))
+			throw SemanticException(idToken, "Already declared name");
+		else{
+			ModuleAttributes attributes{};
+			io_tableOfNames.Insert({id, &attributes});
+		}
+		m_childRules[1].DefinitionProcess(io_tableOfNames, id.name); //to block
+	}
+	else if (m_rule.m_leftPart.getNterminal() == "declarationparts"){
 
+	}
+	else if (m_rule.m_leftPart.getNterminal() == "proceduredeclarationparts"){
+	}
+	else if (m_rule.m_leftPart.getNterminal() == "variabledeclarations"){
+	}
+	else if (m_rule.m_leftPart.getNterminal() == "constantdeclarations"){
+	}
+	else if (m_rule.m_leftPart.getNterminal() == "statementpart"){
+	}
+	else{
+		for (auto& it : m_childRules)
+			it.DefinitionProcess(io_tableOfNames, i_currentBlock);
+	}
+}
+void ParseTree::UsageProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){
+
+}
+TableOfNames ParseTree::SemanticAnalyze(){
+	TableOfNames tableOfNames;
+	DefinitionProcess(tableOfNames);
+	UsageProcess(tableOfNames);
+	return tableOfNames;
 }

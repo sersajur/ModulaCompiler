@@ -16,7 +16,17 @@ TableOfNames::~TableOfNames() {
 	for (auto& it : m_nameRecords)
 		delete it.second;
 }
-
+TableOfNames::TableOfNames(const TableOfNames& i_srcTable){
+	for (auto it : i_srcTable.m_nameRecords){
+		this->Insert({it.first, it.second});
+	}
+}
+TableOfNames& TableOfNames::operator=(const TableOfNames& i_srcTable){
+	for (auto it : i_srcTable.m_nameRecords){
+		this->Insert({it.first, it.second});
+	}
+	return *this;
+}
 
 bool TableOfNames::IsDeclared(const TNameId& i_id) const{
 	return m_nameRecords.find(i_id) != m_nameRecords.end();
@@ -48,4 +58,16 @@ void TableOfNames::Insert(const TRecord& i_record){
 		break;
 	};
 	m_nameRecords.insert({i_record.ID, p_newAttribute});
+}
+const std::vector<std::string> TableOfNames::HeaderLine{"Block", "IdName", "Attributes"};
+
+std::ostream& operator<<(std::ostream& io_os, const TableOfNames& i_table){
+	for (auto& it : TableOfNames::HeaderLine)
+		io_os << it << '\t';
+	io_os << std::endl;
+
+	for (auto& it : i_table.m_nameRecords)
+		io_os << it.first.blockName << "\t"
+			<< it.first.name  << ":\t" << it.second->getPrintableText() << std::endl;
+	return io_os;
 }

@@ -10,9 +10,10 @@
 
 #include <vector>
 #include <ostream>
+#include <string>
 #include "Rule.h"
-#include "TToken.h"
 #include "TableOfNames.h"
+#include "TToken.h"
 
 class ParseTree {
 private:
@@ -21,6 +22,8 @@ private:
 private:
 	std::ostream& FormatedPrint(std::ostream& io_os, const unsigned i_tabCounter) const;
 	void AssociateWithInput(std::vector<TToken>::const_iterator& io_it);
+	void DefinitionProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock = "");
+	void UsageProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock = "");
 public:
 	ParseTree();
 	virtual ~ParseTree();
@@ -29,7 +32,7 @@ public:
 	void setChildren(const std::vector<ParseTree>& i_children);
 
 	void AssociateWithInput(const std::vector<TToken>& i_input);
-	TableOfNames SymanticAnalyze();
+	TableOfNames SemanticAnalyze();
 
 	friend std::ostream& operator<<(std::ostream& io_os, const ParseTree& i_parseTree);
 
