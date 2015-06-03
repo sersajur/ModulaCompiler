@@ -165,7 +165,200 @@ TableOfNames ParseTree::SemanticAnalyze(){
 	UsageCheckProcess(tableOfNames);
 	return tableOfNames;
 }
-ByteCode ParseTree::GenerateCode(const TableOfNames& i_tableOfNames){
-	//code stub
-	return ByteCode{};
+
+// code generation should not be part of a tree
+// reasoning: it's not tree doing job on itself,
+// but outer entity (some ICodeGenerator) doing tree traversal
+// as of right now, it breaches S in SOLID
+std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode& code){
+    switch(m_rule.m_number)
+    {
+    case 2: // module start
+        code.emitCode("LABEL _MODULE_" + m_childRules[0].m_rule.m_rightPart[1].getAssociatedToken().getLexeme());
+        if (m_childRules[1].m_rule.m_number == 5) {
+            m_childRules[1].m_childRules[0].GenerateCode(i_tableOfNames, code);
+            code.emitCode("LABEL _MODULESTART");
+            m_childRules[1].m_childRules[1].GenerateCode(i_tableOfNames, code);
+        } else {
+            code.emitCode("LABEL _MODULESTART");
+            m_childRules[1].m_childRules[0].GenerateCode(i_tableOfNames, code);
+        }
+        break;
+    case 51: // procedure declaration
+        code.emitCode("LABEL _PROCEDURE_" + m_rule.m_rightPart[1].getAssociatedToken().getLexeme());
+        m_childRules[0].GenerateCode(i_tableOfNames, code);
+        code.emitCode("RET");
+        break;
+    case 29: // bool literal
+    case 31: // string literal, not working
+    case 34: // int literal
+    case 35: // real literal
+        return m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
+    case 28: // signed variable or literal
+    {
+        auto sign = m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
+        auto number = m_childRules[1].GenerateCode(i_tableOfNames, code);
+        return code.emitCode(sign + " 0 " + number);
+    }
+    case 79: // variable
+    {
+        auto id = m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
+        if (m_childRules[0].m_rule.IsLambda()) return id;
+        // array indeces
+        auto indexExpr = m_childRules[0].m_childRules[0];//nIndices
+        auto rest = m_childRules[0].m_childRules[1];//nVar1
+        while (true) {
+            int index = 0;
+            std::string last;
+            while (true) {
+                auto expr = indexExpr.m_childRules[0].GenerateCode(i_tableOfNames, code);
+                auto prev = code.emitCode("BOUNDS " + id + " " + std::to_string(index));
+                if (index) {
+                    prev = code.emitCode("* " + expr + " " + prev);
+                    last = code.emitCode("+ " + last + " " + prev);
+                } else {
+                    last = expr;
+                }
+                index++;
+                if (indexExpr.m_childRules[1].m_rule.IsLambda()) break;
+                indexExpr = indexExpr.m_childRules[1].m_childRules[0];
+            }
+            id = code.emitCode("ADDR " + id + " " + last);
+            if (rest.m_rule.IsLambda()) break;
+            indexExpr = rest.m_childRules[0];
+            rest = rest.m_childRules[1];
+        }
+        return id;
+    }
+    case 78: // assignment
+    {
+        auto varName = m_childRules[0].GenerateCode(i_tableOfNames, code);
+        auto varExpr = m_childRules[1].GenerateCode(i_tableOfNames, code);
+        return code.emitCode("= " + varName + " " + varExpr);
+    }
+    case 85: // expression
+    {
+        auto leftRelationPart = m_childRules[0].GenerateCode(i_tableOfNames, code);
+        if (m_childRules[1].m_rule.IsLambda())
+            return leftRelationPart;
+        auto op = m_childRules[1].m_childRules[0].m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
+        auto rightRelationPart = m_childRules[1].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code);
+        return code.emitCode(op + " " + leftRelationPart + " " + rightRelationPart);
+    }
+    case 89: // "simple"/addition expression
+    {
+        auto leftPart = m_childRules[0]/*.m_childRules[0]*/.GenerateCode(i_tableOfNames, code);
+        if (m_childRules[1].m_rule.IsLambda())
+            return leftPart;
+        auto rightPart = m_childRules[1].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code);
+        auto op = m_childRules[1].m_childRules[0].m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
+        return code.emitCode(op + " " + leftPart + " " + rightPart);
+    }
+    case 90: // signed expressions, fails due to grammmar
+    {
+        auto sign = m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
+        auto expr = m_childRules[1].GenerateCode(i_tableOfNames, code);
+        return code.emitCode(sign + " 0 " + expr);
+    }
+        break;
+    case 96: // multiplication expression
+    {
+        auto leftPart = m_childRules[0]/*.m_childRules[0].m_childRules[0]*/.GenerateCode(i_tableOfNames, code);
+        if (m_childRules[1].m_rule.IsLambda())
+            return leftPart;
+        auto rightPart = m_childRules[1].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code);
+        auto op = m_childRules[1].m_childRules[0].m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
+        return code.emitCode(op + " " + leftPart + " " + rightPart);
+    }
+    case 100: // number in multiplication
+    {
+        auto node = m_childRules[0];
+        while (node.m_childRules.size() != 0)
+            node = node.m_childRules[0];
+        return node.GenerateCode(i_tableOfNames, code);
+    }
+        //return m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code);
+    case 102: // var in multiplication
+        return m_childRules[0].GenerateCode(i_tableOfNames, code);
+    case 125: // if
+    {
+        if (m_childRules[2].m_rule.m_number == 126){ // short if
+            auto labelAfter = code.getNextLabel();
+            auto expr = m_childRules[0].GenerateCode(i_tableOfNames, code);
+            code.emitCode("IFFALSE " + expr + " " + labelAfter);
+            m_childRules[1].GenerateCode(i_tableOfNames, code);
+            code.emitCode("LABEL " + labelAfter);
+        } else if (m_childRules[2].m_rule.m_number == 128) { // long if
+            auto labelAfter = code.getNextLabel();
+            auto labelElse = code.getNextLabel();
+            auto expr = m_childRules[0].GenerateCode(i_tableOfNames, code);
+            code.emitCode("IFFALSE " + expr + " " + labelElse);
+            m_childRules[1].GenerateCode(i_tableOfNames, code);
+            code.emitCode("GOTO " + labelAfter);
+            code.emitCode("LABEL " + labelElse);
+            m_childRules[2].m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code);
+            code.emitCode("LABEL " + labelAfter);
+        } else if (m_childRules[2].m_rule.m_number == 127) { // elsif
+            auto labelAfter = code.getNextLabel();
+            auto expr = m_childRules[0].GenerateCode(i_tableOfNames, code);
+            code.emitCode("IFFALSE " + expr + " " + labelAfter);
+            m_childRules[1].GenerateCode(i_tableOfNames, code);
+            code.emitCode("GOTO " + labelAfter);
+            auto elsif = m_childRules[2].m_childRules[0];
+            while (!elsif.m_rule.IsLambda()) {
+                auto labelElse = code.getNextLabel();
+                auto expr = elsif.m_childRules[0].GenerateCode(i_tableOfNames, code);
+                code.emitCode("IFFALSE " + expr + " " + labelElse);
+                elsif.m_childRules[1].GenerateCode(i_tableOfNames, code);
+                code.emitCode("GOTO " + labelAfter);
+                code.emitCode("LABEL " + labelElse);
+                elsif = elsif.m_childRules[2];
+            }
+            //m_childRules[2].m_childRules[1].GenerateCode(i_tableOfNames, code);
+            if (!m_childRules[2].m_childRules[1].m_rule.IsLambda())
+                m_childRules[2].m_childRules[1].m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code);
+            code.emitCode("LABEL " + labelAfter);
+        }
+    }
+        break;
+    case 135: // for
+    {
+        auto labelForStart = code.getNextLabel();
+        auto labelForEnd = code.getNextLabel();
+        auto iterator = m_childRules[0].GenerateCode(i_tableOfNames, code);
+        auto start = m_childRules[1].GenerateCode(i_tableOfNames, code);
+        auto end = m_childRules[2].GenerateCode(i_tableOfNames, code);
+        code.emitCode("= " + iterator + " " + start);
+        code.emitCode("LABEL " + labelForStart);
+        auto condition = code.emitCode("< " + iterator + " " + end);
+        code.emitCode("IFFALSE " + condition + " " + labelForEnd);
+        m_childRules[3].GenerateCode(i_tableOfNames, code);
+        code.emitCode("GOTO " + labelForStart);
+        code.emitCode("LABEL " + labelForEnd);
+    }
+        break;
+    case 104: // function call
+    case 122: // procedure call
+    {
+        auto funcName = m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
+        auto parameters = m_childRules[0].m_childRules[0].m_childRules[0];
+        if (m_rule.m_number == 122) parameters = parameters.m_childRules[0];
+        while (true) {
+            auto param = parameters.m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code);
+            code.emitCode("PUSH " + param);
+            if (parameters.m_childRules[1].m_rule.IsLambda()) break;
+            parameters = parameters.m_childRules[1].m_childRules[0];
+        }
+        code.emitCode("CALL _PROCEDURE_" + funcName);
+        if (m_rule.m_number == 104)
+            return code.emitCode("POP");
+    }
+        break;
+    default:
+        if (m_childRules.size() == 1) return m_childRules[0].GenerateCode(i_tableOfNames, code);
+        for (auto& subtree : m_childRules)
+            subtree.GenerateCode(i_tableOfNames, code);
+        break;
+    }
+    return "";
 }
