@@ -59,8 +59,6 @@ const  std::map<TToken::TTokenClass, std::string> TToken::ClassString{
 		CLASS_STRING(rbr),
 		CLASS_STRING(lbrind),
 		CLASS_STRING(rbrind),
-//		CLASS_STRING(false),
-//		CLASS_STRING(true),
 		CLASS_STRING(begin),
 		CLASS_STRING(end),
 		CLASS_STRING(if),

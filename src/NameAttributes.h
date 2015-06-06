@@ -60,10 +60,7 @@ public:
 	virtual ~ArrayAttributes(){};
 	NameAttributes::NameType getNameType() const override {return NameAttributes::NameType::Array;}
 public:
-	struct TDimBoundary{
-		unsigned low_edge;
-		unsigned high_edge;
-	};
+	typedef std::pair<int, int> TDimBoundary;
 	ArrayAttributes(const NameAttributes::Type& i_type, const std::vector<TDimBoundary>& i_dimBoundaties):
 		m_type{i_type}, m_dimBoundaries{i_dimBoundaties} {}
 	std::string getPrintableText() const override;

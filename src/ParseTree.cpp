@@ -8,6 +8,7 @@
 
 #include "SemanticException.h"
 #include "ParseTree.h"
+#include <iostream> //debug
 
 using std::ostream;
 using std::endl;
@@ -75,9 +76,12 @@ void ParseTree::InsertToTableIfUndefinedOrThrowException(TableOfNames& io_tableO
 		io_tableOfNames.Insert(i_record);
 	}
 }
+const ParseTree& ParseTree::operator=(const ParseTree i_parseTree){
+	m_childRules = i_parseTree.m_childRules;
+	m_rule = i_parseTree.m_rule;
+	return *this;
+}
 void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){
-
-
 	if (m_rule.m_leftPart.getNterminal() == "program"){
 		m_childRules[0].DefinitionProcess(io_tableOfNames, i_currentBlock);
 	}
@@ -146,15 +150,35 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 				InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
 				subtree = subtree.m_childRules[0];
 			}while(!subtree.m_rule.IsLambda());
-
 		}
 		else{ // array
-
+			auto typeTree = m_childRules[1].m_childRules[0].m_childRules[1]; //"type"
+			NameAttributes::Type type{NameAttributes::TokenTypeToType(typeTree.m_rule.getRightPart()[0].getTerminal())};
+			ParseTree subtree = m_childRules[1].m_childRules[0]; //"arraystructure"
+			std::vector<ArrayAttributes::TDimBoundary> boundaries{};
+			do{
+				subtree = subtree.m_childRules[0]; //indexRangeListTree
+				int left{subtree.m_childRules[0].m_rule.getRightPart()[0].getAssociatedToken().getValue().asInt};
+				int right{subtree.m_childRules[0].m_rule.getRightPart()[2].getAssociatedToken().getValue().asInt};
+				boundaries.push_back({left, right});
+				subtree = subtree.m_childRules[1];
+			}while(!subtree.m_rule.IsLambda());
+			ArrayAttributes attributes{type, boundaries};
+			subtree = *this;
+			do{
+				subtree = subtree.m_childRules[0];
+				TToken idToken = subtree.m_rule.getRightPart()[0].getAssociatedToken();
+				TableOfNames::TNameId id{idToken.getLexeme(), i_currentBlock};
+				InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
+				subtree = subtree.m_childRules[0];
+			}while(!subtree.m_rule.IsLambda());
 		}
 	}
-	else if (*this == "proceduredeclaration"){
-
-	}
+	//else if (*this == "proceduredeclaration"){
+	// 1. Parameters to tableOfNames
+	// 2. procedure to tableOfNames
+	// 3. Step inside to procedure
+	//}
 }
 void ParseTree::UsageCheckProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){
 

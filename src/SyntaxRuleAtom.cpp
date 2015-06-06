@@ -19,7 +19,8 @@ SyntaxRuleAtom::~SyntaxRuleAtom(){
 
 SyntaxRuleAtom::SyntaxRuleAtom(const TToken::TTokenClass& i_tokenClass):
 m_isTerminalFlag{true},
-m_terminal{i_tokenClass}{
+m_terminal{i_tokenClass},
+m_nterminal{"non"}{
 
 }
 SyntaxRuleAtom::SyntaxRuleAtom(const string& i_ntermName):
@@ -36,7 +37,8 @@ m_terminal{TToken::TTokenClass(-1)}{
 }
 SyntaxRuleAtom::SyntaxRuleAtom(const TToken& i_token):
 m_isTerminalFlag{true},
-m_terminal{i_token.getClass()}{
+m_terminal{i_token.getClass()},
+m_nterminal{"non"}{
 
 }
 bool SyntaxRuleAtom::operator<(const SyntaxRuleAtom& i_rOperand)const{

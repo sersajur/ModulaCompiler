@@ -39,7 +39,9 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& io_os, const ParseTree& i_parseTree);
 
+	const ParseTree& operator=(const ParseTree i_parseTree);
 	void TestPrint(std::ostream& o_os)const; //TODO: remove debug
+	operator std::string()const {return m_rule.m_leftPart.getNterminal();}
 };
 
 #endif /* PARSETREE_H_ */

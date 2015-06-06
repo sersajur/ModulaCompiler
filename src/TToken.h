@@ -77,6 +77,7 @@ private:
 	static const  std::map<TTokenClass, std::string> ClassString;
 
 public:
+
 	union TTokenValue{
 		bool asBool;
 		int asInt;

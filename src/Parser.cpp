@@ -200,7 +200,7 @@ void Parser::Configurate(){
 	(nIndexRangeList, {nIndexRange, nIndexRange1})
 	(nIndexRange1, {tComma, nIndexRangeList})
 	(nIndexRange1, {})
-	(nIndexRange, {nConstant, tColom, nConstant})
+	(nIndexRange, {tValInt, tColom, tValInt})
 	(nVariableDecalration, {nIdentList, tColom, nType})
 	(nProcedureDeclaration,{tProcedure, tId, nProcedureDeclaration1})
 	(nProcedureDeclaration1, {nMbProcedureBody})
@@ -352,22 +352,22 @@ bool Parser::Parse(const SyntaxRuleAtom i_syntaxAtom, ParseTree& o_parseTree){
 	}
 
 //Debug:
-	cout << "##########################################################" << endl;
-	cout << "Current terminal: " ;
-	if (savedCurrentPosition!=m_input.end())
-		cout << *savedCurrentPosition << endl;
-	else
-		cout << "_eof" << endl;
-	cout << "Current syn atom: " << i_syntaxAtom << endl;
-	cout << "Rule candidates : " << endl;
-	for (auto& rule : ruleCandidates)
-		cout << "\t" << rule << endl;
-	cout << "Chasen one      : ";
-	if (matchedRule.IsInit())
-		cout << matchedRule << endl;
-	else
-		cout << "none" <<endl;
-
+//	cout << "##########################################################" << endl;
+//	cout << "Current terminal: " ;
+//	if (savedCurrentPosition!=m_input.end())
+//		cout << *savedCurrentPosition << endl;
+//	else
+//		cout << "_eof" << endl;
+//	cout << "Current syn atom: " << i_syntaxAtom << endl;
+//	cout << "Rule candidates : " << endl;
+//	for (auto& rule : ruleCandidates)
+//		cout << "\t" << rule << endl;
+//	cout << "Chasen one      : ";
+//	if (matchedRule.IsInit())
+//		cout << matchedRule << endl;
+//	else
+//		cout << "none" <<endl;
+//
 	return matchedRule.IsInit();
 }
 bool Parser::CheckNextTerminal(const TToken::TTokenClass& i_tokenClassToBeCompared){
