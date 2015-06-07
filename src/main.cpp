@@ -83,9 +83,10 @@ int main(int argn, const char* argv[]){
 		//
 		//	code stub:
 
-		outFile << "Code generation:" << endl;
-		ByteCode byteCode = parseTree.GenerateCode(tableOfNames);
-		outFile << byteCode << endl;
+        outFile << "Code generation:" << endl;
+        ByteCode byteCode;
+        parseTree.GenerateCode(tableOfNames, byteCode);
+        outFile << byteCode << endl;
 
 	}
 	catch(TLexicalException& e){
