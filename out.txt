@@ -1,41 +1,54 @@
 Lexical analyze:
-1:1	module	module
-1:7	id	Main
-1:12	semicolom	;
-1:13	var	var
-2:4	id	a
-3:3	comma	,
-3:4	id	b
-3:6	colom	:
-3:7	real	real
-3:12	semicolom	;
-3:13	id	arrv
-4:6	comma	,
-4:7	id	as
-4:10	colom	:
-4:11	array	array
-4:17	intval	1
-4:19	colom	:
-4:20	intval	15
-4:22	comma	,
-4:23	intval	1
-4:24	colom	:
-4:25	intval	20
-4:27	comma	,
-4:28	intval	1
-4:29	colom	:
-4:30	intval	4
-4:31	of	of
-4:34	real	real
-4:39	semicolom	;
-4:40	begin	begin
-5:5	id	a
-6:3	ass	:=
-6:5	intval	3
-6:6	end	end
-7:3	id	Main
-7:8	dot	.
-7:9	eof	
+1:1	module	"module"	
+1:7	id	"Main"	
+1:12	semicolom	";"	
+1:13	var	"var"	
+2:4	id	"a"	
+3:3	comma	","	
+3:4	id	"b"	
+3:6	colom	":"	
+3:7	real	"real"	
+3:12	semicolom	";"	
+3:13	id	"arrv"	
+4:6	comma	","	
+4:7	id	"as"	
+4:10	colom	":"	
+4:11	array	"array"	
+4:17	intval	"1"	1
+4:19	colom	":"	
+4:20	intval	"15"	15
+4:22	comma	","	
+4:23	intval	"1"	1
+4:24	colom	":"	
+4:25	intval	"20"	20
+4:27	comma	","	
+4:28	intval	"1"	1
+4:29	colom	":"	
+4:30	intval	"4"	4
+4:31	of	"of"	
+4:34	real	"real"	
+4:39	semicolom	";"	
+4:40	const	"const"	
+5:6	id	"str"	
+6:4	eq	"="	
+6:6	strval	"'sdsd'"	'sdsd'
+6:13	semicolom	";"	
+6:14	begin	"begin"	
+7:5	id	"a"	
+8:3	ass	":="	
+8:5	intval	"3"	3
+8:6	semicolom	";"	
+8:7	id	"b"	
+9:3	ass	":="	
+9:5	intval	"12B"	10
+9:8	semicolom	";"	
+9:9	id	"t"	
+10:3	ass	":="	
+10:5	realval	"0.4E-10"	4e-11
+10:12	end	"end"	
+11:3	id	"Main"	
+11:8	dot	"."	
+11:9	eof		
 Syntax analyze:
 1: <program>::=<module> dot 
 	2: <module>::=<moduleheading> <block> id 
@@ -72,7 +85,16 @@ Syntax analyze:
 																	48: <fctindexrange>::=Lambda
 												40: <basetype>::=real 
 									24: <fctvariabledeclaration>::=Lambda
-				11: <fctdeclarationpart>::=Lambda
+				10: <fctdeclarationpart>::=<declarationparts> 
+					9: <declarationparts>::=<declarationpart> <fctdeclarationpart> 
+						12: <declarationpart>::=const <fctconstantdeclarations> 
+							15: <fctconstantdeclarations>::=<constantdeclarations> 
+								19: <constantdeclarations>::=<constantdeclaration> semicolom <fctconstantdeclaration> 
+									26: <constantdeclaration>::=id eq <constant> 
+										27: <constant>::=<unsignedconstant> 
+											31: <unsignedconstant>::=strval 
+									21: <fctconstantdeclaration>::=Lambda
+						11: <fctdeclarationpart>::=Lambda
 			8: <fctdeclarationparts>::=<statementpart> end 
 				25: <statementpart>::=begin <statementsequence> 
 					71: <statementsequence>::=<statement> <fctstatement> 
@@ -89,13 +111,44 @@ Syntax analyze:
 											98: <fcttermmul>::=Lambda
 										92: <fcttermadd>::=Lambda
 									87: <fctsimpleexpression>::=Lambda
-						73: <fctstatement>::=Lambda
+						72: <fctstatement>::=semicolom <statementsequence> 
+							71: <statementsequence>::=<statement> <fctstatement> 
+								74: <statement>::=<assignment> 
+									78: <assignment>::=<variable> ass <expression> 
+										79: <variable>::=id <fctvar> 
+											81: <fctvar>::=Lambda
+										85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+											89: <SimpleExpression>::=<term> <fcttermadd> 
+												96: <term>::=<factor> <fcttermmul> 
+													100: <factor>::=<unsignedconstant> 
+														30: <unsignedconstant>::=<number> 
+															34: <number>::=intval 
+													98: <fcttermmul>::=Lambda
+												92: <fcttermadd>::=Lambda
+											87: <fctsimpleexpression>::=Lambda
+								72: <fctstatement>::=semicolom <statementsequence> 
+									71: <statementsequence>::=<statement> <fctstatement> 
+										74: <statement>::=<assignment> 
+											78: <assignment>::=<variable> ass <expression> 
+												79: <variable>::=id <fctvar> 
+													81: <fctvar>::=Lambda
+												85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+													89: <SimpleExpression>::=<term> <fcttermadd> 
+														96: <term>::=<factor> <fcttermmul> 
+															100: <factor>::=<unsignedconstant> 
+																30: <unsignedconstant>::=<number> 
+																	35: <number>::=realval 
+															98: <fcttermmul>::=Lambda
+														92: <fcttermadd>::=Lambda
+													87: <fctsimpleexpression>::=Lambda
+										73: <fctstatement>::=Lambda
 Semantic analyze:
-Block	IdName	Attributes	
-	Main:	Module
-Main	a:	Variable
-Main	arrv:	Array
-Main	as:	Array
-Main	b:	Variable
+Block	IdName	Attributes
+     	  Main	Module
+ Main	     a	Variable
+ Main	  arrv	Array
+ Main	    as	Array
+ Main	     b	Variable
+ Main	   str	Constant
 Code generation:
 This is code stub for byte-code printing

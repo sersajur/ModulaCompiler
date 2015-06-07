@@ -82,21 +82,27 @@ public:
 		bool asBool;
 		int asInt;
 		float asReal;
-		TTokenValue(){}
-		//TODO: repair the union, extend it for string
-//		string asString;
-//		TTokenValue(): asString(){}
-//		TTokenValue(const TTokenValue& i_value){ this->asString = i_value.asString; }
-//		~TTokenValue(){}
+		std::string asString;
+		TTokenValue():asString{""}{}
+		TTokenValue(const TTokenValue& i_tval): asBool{i_tval.asBool}{}
+		TTokenValue& operator=(const TTokenValue& i_tval){
+			asBool = i_tval.asBool;
+			return *this;
+		}
+		~TTokenValue(){}
 	};
 
 	struct TPosition{
 		unsigned line;
 		unsigned column;
+		TPosition():line{0},column{0}{}
+		TPosition(const unsigned l, const unsigned c): line{l}, column{c}{}
+		TPosition(const TPosition& i_pos): line{i_pos.line}, column{i_pos.column}{}
 	};
 
 	TToken();
-	TToken(const TTokenClass&, const std::string&,  const TPosition&);
+	TToken(const TTokenClass& i_tclass, const std::string& i_tlexeme,  const TPosition i_position);
+	TToken(const TToken& i_token);
 	virtual ~TToken();
 
 	const TTokenClass getClass()const { return m_class; }

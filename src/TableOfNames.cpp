@@ -60,14 +60,28 @@ void TableOfNames::Insert(const TRecord& i_record){
 	m_nameRecords.insert({i_record.ID, p_newAttribute});
 }
 const std::vector<std::string> TableOfNames::HeaderLine{"Block", "IdName", "Attributes"};
+inline std::string stringNSpace(long unsigned int i_n){
+	std::string o_str{};
+	for (;i_n != 0; i_n--)
+		o_str += ' ';
+	return o_str;
 
+}
 std::ostream& operator<<(std::ostream& io_os, const TableOfNames& i_table){
-	for (auto& it : TableOfNames::HeaderLine)
-		io_os << it << '\t';
-	io_os << std::endl;
+	std::vector<long unsigned> maxLength{TableOfNames::HeaderLine[0].length(), TableOfNames::HeaderLine[1].length()};
+	for (auto& it : i_table.m_nameRecords){
+		maxLength[0] = ((it.first.blockName.length() > maxLength[0]) ? it.first.blockName.length() : maxLength[0]);
+		maxLength[1] = ((it.first.name.length() > maxLength[0]) ? it.first.blockName.length() : maxLength[1]);
+	}
 
-	for (auto& it : i_table.m_nameRecords)
-		io_os << it.first.blockName << "\t"
-			<< it.first.name  << ":\t" << it.second->getPrintableText() << std::endl;
+	io_os << stringNSpace(maxLength[0] - TableOfNames::HeaderLine[0].length()) << TableOfNames::HeaderLine[0] << '\t';
+	io_os << stringNSpace(maxLength[1] - TableOfNames::HeaderLine[1].length()) << TableOfNames::HeaderLine[1] << '\t';
+	io_os << TableOfNames::HeaderLine[2] << std::endl;
+
+	for (auto& it : i_table.m_nameRecords){
+		io_os << stringNSpace(maxLength[0] - it.first.blockName.length()) << it.first.blockName << '\t';
+		io_os << stringNSpace(maxLength[1] - it.first.name.length()) << it.first.name << '\t';
+		io_os << it.second->getPrintableText() << std::endl;
+	}
 	return io_os;
 }
