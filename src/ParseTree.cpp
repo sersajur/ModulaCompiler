@@ -254,11 +254,14 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
         auto op = m_childRules[1].m_childRules[0].m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
         return code.emitCode(op + " " + leftPart + " " + rightPart);
     }
-    case 90: // signed expressions, fails due to grammmar
+    case 90: // signed expressions
     {
         auto sign = m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
         auto expr = m_childRules[1].GenerateCode(i_tableOfNames, code);
-        return code.emitCode(sign + " 0 " + expr);
+        auto rightPart = m_childRules[2].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code);
+        auto op = m_childRules[2].m_childRules[0].m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
+        auto leftPart = code.emitCode(sign + " 0 " + expr);
+        return code.emitCode(op + " " + leftPart + " " + rightPart);
     }
         break;
     case 96: // multiplication expression

@@ -241,7 +241,7 @@ void Parser::Configurate(){
 	(nSimpleExpression1, {})
 	(nMbRelation, {nRelation, nSimpleExpression})
 	(nSimpleExpression, {nTerm, nTermAdd})
-    (nSimpleExpression, {nMbSign, nSimpleExpression})
+    (nSimpleExpression, {nMbSign, nTerm, nTermAdd})
 	(nTermAdd, {nMbAddition})
 	(nTermAdd, {})
 	(nMbSign,  {tPlus})
