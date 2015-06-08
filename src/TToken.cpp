@@ -136,6 +136,28 @@ TToken::TToken(const TToken& i_token):
 		break;
 	}
 }
+TToken TToken::operator=(const TToken& i_token){
+	this->m_class = i_token.m_class;
+	this->m_lexeme = i_token.m_lexeme;
+	this->m_pos = i_token.m_pos;
+	switch (m_class){
+	case TTokenClass::_boolval:
+		m_value.asBool = i_token.m_value.asBool;
+		break;
+	case TTokenClass::_intval:
+		m_value.asInt = i_token.m_value.asInt;
+		break;
+	case TTokenClass::_realval:
+		m_value.asReal = i_token.m_value.asReal;
+		break;
+	case TTokenClass::_strval:
+		m_value.asString = i_token.m_value.asString;
+		break;
+	default:
+		break;
+	}
+	return *this;
+}
 TToken::~TToken() {
 
 }

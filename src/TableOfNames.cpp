@@ -51,7 +51,7 @@ void TableOfNames::Insert(const TRecord& i_record){
 		p_newAttribute = new VariableAttributes{*(dynamic_cast<VariableAttributes*>(i_record.attributes))};
 		break;
 	case NameAttributes::NameType::Constant:
-		p_newAttribute = new ConstantAttributes{*(dynamic_cast<ConstantAttributes*>(i_record.attributes))};
+		p_newAttribute = new ConstantAttributes{*(dynamic_cast<ConstantAttributes*>((i_record.attributes)))};
 		break;
 	default:
 		//May be throwing error needed

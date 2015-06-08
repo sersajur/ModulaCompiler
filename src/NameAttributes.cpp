@@ -53,14 +53,87 @@ std::string ModuleAttributes::getPrintableText() const{
 	return NameAttributes::NameTypeString.find(getNameType())->second;
 }
 std::string ProcedureAttributes::getPrintableText() const{
-	return NameAttributes::NameTypeString.find(getNameType())->second;
+	std::string o_str{NameAttributes::NameTypeString.find(getNameType())->second};
+	o_str += "\t(";
+	for (auto& it : m_inputParametersType){
+		o_str += ' ' + NameAttributes::TypeString.find(it)->second + ',';
+	}
+	o_str.pop_back();
+	o_str += " ): " + NameAttributes::TypeString.find(m_returningtype)->second;
+	return o_str;
 }
 std::string ArrayAttributes::getPrintableText() const{
-	return NameAttributes::NameTypeString.find(getNameType())->second;
+	std::string o_str{NameAttributes::NameTypeString.find(getNameType())->second};
+	o_str += "\t(";
+	for (auto& it : m_dimBoundaries){
+		o_str += ' ' + std::to_string(it.first) + ':' + std::to_string(it.second) + ',';
+	}
+	o_str.pop_back();
+	o_str += " ): " + NameAttributes::TypeString.find(m_type)->second;
+	return o_str;
 }
 std::string VariableAttributes::getPrintableText() const{
-	return NameAttributes::NameTypeString.find(getNameType())->second;
+	std::string o_str{NameAttributes::NameTypeString.find(getNameType())->second};
+	o_str += "\t: " + NameAttributes::TypeString.find(m_type)->second;
+	return o_str;
+}
+ConstantAttributes::ConstantAttributes(const NameAttributes::Type& i_type, const TToken::TTokenValue& i_value):
+	m_type{i_type}{
+	switch(m_type){
+	case Type::Boolean:
+		m_value.asBool = i_value.asBool;
+		break;
+	case Type::Integer:
+		m_value.asInt = i_value.asInt;
+		break;
+	case Type::Real:
+		m_value.asReal = i_value.asReal;
+		break;
+	case Type::String:
+		m_value.asString = i_value.asString;
+		break;
+	default:
+		break;
+	}
+}
+ConstantAttributes::ConstantAttributes(const ConstantAttributes& i_attr):
+	m_type{i_attr.m_type}{
+	switch(m_type){
+	case Type::Boolean:
+		m_value.asBool = i_attr.m_value.asBool;
+		break;
+	case Type::Integer:
+		m_value.asInt = i_attr.m_value.asInt;
+		break;
+	case Type::Real:
+		m_value.asReal = i_attr.m_value.asReal;
+		break;
+	case Type::String:
+		m_value.asString = i_attr.m_value.asString;
+		break;
+	default:
+		break;
+	}
 }
 std::string ConstantAttributes::getPrintableText() const{
-	return NameAttributes::NameTypeString.find(getNameType())->second;
+	std::string o_str{NameAttributes::NameTypeString.find(getNameType())->second};
+	o_str += '\t';
+	switch(m_type){
+	case Type::Boolean:
+		o_str += std::to_string(m_value.asBool);
+		break;
+	case Type::Integer:
+		o_str += std::to_string(m_value.asInt);
+		break;
+	case Type::Real:
+		o_str += std::to_string(m_value.asReal);
+		break;
+	case Type::String:
+		o_str += m_value.asString;
+		break;
+	default:
+		break;
+	}
+	o_str += ": " + NameAttributes::TypeString.find(m_type)->second;
+	return o_str;
 }

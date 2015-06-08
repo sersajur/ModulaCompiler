@@ -88,12 +88,14 @@ public:
 	virtual ~ConstantAttributes(){};
 	NameAttributes::NameType getNameType() const override {return NameAttributes::NameType::Constant;}
 public:
-	ConstantAttributes(const NameAttributes::Type& i_type, const TToken::TTokenValue& i_value):
-		m_type{i_type}, m_value{i_value} {}
+	ConstantAttributes(const NameAttributes::Type& i_type, const TToken::TTokenValue& i_value);
+	ConstantAttributes(const ConstantAttributes& i_attr);
 	std::string getPrintableText() const override;
 private:
 	NameAttributes::Type m_type;
 	TToken::TTokenValue m_value;
+
+	friend class TableOfNames;
 };
 
 #endif /* NAMEATTRIBUTES_H_ */

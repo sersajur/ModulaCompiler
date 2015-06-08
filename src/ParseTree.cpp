@@ -126,13 +126,25 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 			if (terminal.getAssociatedToken().getClass() == TToken::TTokenClass::_sub)
 				sign = -1;
 		}
-		TToken::TTokenValue value{valueToken.getValue()};
 		NameAttributes::Type type = NameAttributes::TokenTypeToType(valueToken.getClass());
-		if (isSign){
-			if (type == NameAttributes::Type::Real)
-				value.asReal *= float(sign);
-			else
-				value.asInt *= sign;
+		TToken::TTokenValue value{};
+		switch (type){
+		case NameAttributes::Type::Boolean:
+			value.asBool = valueToken.getValue().asBool;
+			break;
+		case NameAttributes::Type::Integer:
+			value.asInt = valueToken.getValue().asInt;
+			value.asInt = (isSign ? value.asInt * int(sign) : value.asInt);
+			break;
+		case NameAttributes::Type::Real:
+			value.asReal = valueToken.getValue().asReal;
+			value.asReal = (isSign ? value.asReal * float(sign) : value.asReal);
+			break;
+		case NameAttributes::Type::String:
+			value.asString = valueToken.getValue().asString;
+			break;
+		default:
+			break;
 		}
 		ConstantAttributes attributes{type, value};
 		InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
@@ -174,11 +186,11 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 			}while(!subtree.m_rule.IsLambda());
 		}
 	}
-	//else if (*this == "proceduredeclaration"){
+	else if (*this == "proceduredeclaration"){
 	// 1. Parameters to tableOfNames
 	// 2. procedure to tableOfNames
 	// 3. Step inside to procedure
-	//}
+	}
 }
 void ParseTree::UsageCheckProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){
 

@@ -84,6 +84,7 @@ public:
 		float asReal;
 		std::string asString;
 		TTokenValue():asString{""}{}
+		TTokenValue(const std::string i_str): asString{i_str}{}
 		TTokenValue(const TTokenValue& i_tval): asBool{i_tval.asBool}{}
 		TTokenValue& operator=(const TTokenValue& i_tval){
 			asBool = i_tval.asBool;
@@ -103,10 +104,11 @@ public:
 	TToken();
 	TToken(const TTokenClass& i_tclass, const std::string& i_tlexeme,  const TPosition i_position);
 	TToken(const TToken& i_token);
+	TToken operator=(const TToken& i_token);
 	virtual ~TToken();
 
 	const TTokenClass getClass()const { return m_class; }
-	const TTokenValue getValue()const { return m_value; }
+	const TTokenValue& getValue()const { return m_value; } // workaround
 	const std::string getLexeme()const { return m_lexeme; }
 	const TPosition getPosition()const { return m_pos; }
 
