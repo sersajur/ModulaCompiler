@@ -87,11 +87,16 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 	}
 	else if (*this == "module"){
 		TToken idToken = m_childRules[0].m_rule.getRightPart()[1].getAssociatedToken();
-		TableOfNames::TNameId id{idToken.getLexeme(), i_currentBlock};
+		TNameId id{idToken.getLexeme(), i_currentBlock};
 		ModuleAttributes attributes{};
 		InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
 		//to declarationparts (if it exists):
-		m_childRules[1].m_childRules[0].DefinitionProcess(io_tableOfNames, id.name);
+		m_childRules[1].DefinitionProcess(io_tableOfNames, id.name);
+	}
+	else if (*this == "block"){
+		if (!this->m_childRules.empty()){
+			this->m_childRules[0].DefinitionProcess(io_tableOfNames, i_currentBlock);
+		}
 	}
 	else if (*this == "declarationparts"){
 		if (m_childRules[0].m_childRules[0] == "proceduredeclaration")
@@ -110,7 +115,7 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 	}
 	else if (*this == "constantdeclaration"){
 		TToken idToken = m_rule.getRightPart()[0].getAssociatedToken();
-		TableOfNames::TNameId id{idToken.getLexeme(), i_currentBlock};
+		TNameId id{idToken.getLexeme(), i_currentBlock};
 		TToken valueToken{};
 		bool isSign{false};
 		int sign{1};
@@ -149,7 +154,7 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 		ConstantAttributes attributes{type, value};
 		InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
 	}
-	else if (*this == "variabledeclaration"){
+	else if (*this == "variabledeclaration" || *this == "section"){
 		if (m_childRules[1].m_childRules[0] == "basetype"){ //variable
 			auto tokenClass = m_childRules[1].m_childRules[0].m_rule.getRightPart()[0].getTerminal();
 			NameAttributes::Type type{NameAttributes::TokenTypeToType(tokenClass)};
@@ -158,7 +163,7 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 			do{
 				subtree = subtree.m_childRules[0];
 				TToken idToken = subtree.m_rule.getRightPart()[0].getAssociatedToken();
-				TableOfNames::TNameId id{idToken.getLexeme(), i_currentBlock};
+				TNameId id{idToken.getLexeme(), i_currentBlock};
 				InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
 				subtree = subtree.m_childRules[0];
 			}while(!subtree.m_rule.IsLambda());
@@ -180,16 +185,49 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 			do{
 				subtree = subtree.m_childRules[0];
 				TToken idToken = subtree.m_rule.getRightPart()[0].getAssociatedToken();
-				TableOfNames::TNameId id{idToken.getLexeme(), i_currentBlock};
+				TNameId id{idToken.getLexeme(), i_currentBlock};
 				InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
 				subtree = subtree.m_childRules[0];
 			}while(!subtree.m_rule.IsLambda());
 		}
 	}
 	else if (*this == "proceduredeclaration"){
-	// 1. Parameters to tableOfNames
-	// 2. procedure to tableOfNames
-	// 3. Step inside to procedure
+		TToken idToken = m_rule.getRightPart()[1].getAssociatedToken();
+		std::string procName{idToken.getLexeme()};
+		TNameId id{procName, i_currentBlock};
+	// 1. Returning type
+		NameAttributes::Type returningType{};
+		auto& bodyTree = (m_childRules[0].m_childRules[0] == "fctmbprocedurebody" ? m_childRules[0].m_childRules[0] : m_childRules[0].m_childRules[1]);
+		if (bodyTree.m_childRules[0] == "mbresulttype"){
+			returningType = NameAttributes::TokenTypeToType(bodyTree.m_childRules[0].m_childRules[0].m_rule.getRightPart()[0].getTerminal());
+		}else{
+			returningType = NameAttributes::Type::Void;
+		}
+	// 2. Parameters to tableOfNames + accepting parameters' type
+		std::vector<TNameId> params{};
+		if (m_childRules[0].m_childRules[0] == "mbformalparameters" && !m_childRules[0].m_childRules[0].m_childRules[0].m_rule.IsLambda()){
+			auto subTree = m_childRules[0].m_childRules[0].m_childRules[0];
+			do{
+				subTree = subTree.m_childRules[0];
+				subTree.m_childRules[1].DefinitionProcess(io_tableOfNames, procName);
+				auto identListTree = subTree.m_childRules[1];
+				do{
+					identListTree = identListTree.m_childRules[0];
+					params.push_back({identListTree.m_rule.getRightPart()[0].getAssociatedToken().getLexeme(), procName});
+					identListTree = identListTree.m_childRules[0];
+				}while(!identListTree.m_rule.IsLambda());
+				subTree = subTree.m_childRules[2];
+			}while(!subTree.m_rule.IsLambda());
+		}
+	// 3. procedure to tableOfNames
+		ProcedureAttributes attributes{params, returningType};
+		InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
+	// 4. Step inside to procedure
+		if (m_childRules[0].m_childRules.back().m_childRules[0] == "block"){
+			m_childRules[0].m_childRules.back().m_childRules[0].DefinitionProcess(io_tableOfNames, procName);
+		}else{
+			m_childRules[0].m_childRules.back().m_childRules[1].DefinitionProcess(io_tableOfNames, procName);
+		}
 	}
 }
 void ParseTree::UsageCheckProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){

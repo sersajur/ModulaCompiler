@@ -55,8 +55,8 @@ std::string ModuleAttributes::getPrintableText() const{
 std::string ProcedureAttributes::getPrintableText() const{
 	std::string o_str{NameAttributes::NameTypeString.find(getNameType())->second};
 	o_str += "\t(";
-	for (auto& it : m_inputParametersType){
-		o_str += ' ' + NameAttributes::TypeString.find(it)->second + ',';
+	for (auto& it : m_inputParameters){
+		o_str += ' ' + it.name + ',';
 	}
 	o_str.pop_back();
 	o_str += " ): " + NameAttributes::TypeString.find(m_returningtype)->second;

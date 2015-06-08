@@ -3,12 +3,13 @@ module Main;
 		a, b: real;
 		arrv, as: array 1:15,1:20,1:4 of real;
 	const 
-	str = 56;
-	procedure lol()
-	var f:integer;
-	begin
-		aaa_lol:=3
-	end dfs;
+		str = 56;
+	
+	procedure lol(a:integer)
+		var f:integer;
+		begin
+			aaa_lol := 3
+		end lol;
 begin
  	a:=lol(3, 5);
  	b:=12B

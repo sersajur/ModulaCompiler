@@ -13,6 +13,14 @@
 #include <map>
 #include "TToken.h"
 
+struct TNameId{
+	std::string name;
+	std::string blockName;
+	bool operator<(const TNameId& compId)const{
+		return ((blockName == compId.blockName) ? (name < compId.name) : (blockName < compId.blockName));
+	}
+};
+
 class NameAttributes{
 public:
 	enum class NameType{
@@ -41,16 +49,16 @@ public:
 
 class ProcedureAttributes: public NameAttributes{
 public:
-	ProcedureAttributes(): m_returningtype{NameAttributes::Type::Void}, m_inputParametersType{} {}
+	ProcedureAttributes(): m_returningtype{NameAttributes::Type::Void}, m_inputParameters{} {}
 	virtual ~ProcedureAttributes(){};
 	NameAttributes::NameType getNameType() const override {return NameAttributes::NameType::Procedure;}
 public:
-	ProcedureAttributes(const std::vector<NameAttributes::Type>& i_inputParamsType, const NameAttributes::Type& i_returningType = NameAttributes::Type::Void):
-		m_returningtype{i_returningType}, m_inputParametersType{i_inputParamsType} {}
+	ProcedureAttributes(const std::vector<TNameId>& i_inputParams, const NameAttributes::Type& i_returningType = NameAttributes::Type::Void):
+		m_returningtype{i_returningType}, m_inputParameters{i_inputParams} {}
 	std::string getPrintableText() const override;
 private:
 	NameAttributes::Type m_returningtype;
-	std::vector<NameAttributes::Type> m_inputParametersType;
+	std::vector<TNameId> m_inputParameters;
 
 };
 

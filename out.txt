@@ -30,42 +30,45 @@ Lexical analyze:
 4:39	semicolom	";"	
 4:40	const	"const"	
 5:6	id	"str"	
-6:4	eq	"="	
-6:6	intval	"56"	56
-6:9	semicolom	";"	
-6:10	procedure	"procedure"	
-7:10	id	"lol"	
-7:14	lbr	"("	
-7:15	rbr	")"	
-7:16	var	"var"	
-8:4	id	"f"	
-8:6	colom	":"	
-8:7	integer	"integer"	
-8:14	semicolom	";"	
-8:15	begin	"begin"	
-9:6	id	"aaa_lol"	
-10:9	ass	":="	
-10:11	intval	"3"	3
-10:12	end	"end"	
-11:4	id	"dfs"	
-11:8	semicolom	";"	
-11:9	begin	"begin"	
-12:5	id	"a"	
-13:3	ass	":="	
-13:5	id	"lol"	
-13:8	lbr	"("	
-13:9	intval	"3"	3
-13:10	comma	","	
-13:11	intval	"5"	5
-13:13	rbr	")"	
-13:14	semicolom	";"	
-13:15	id	"b"	
+6:5	eq	"="	
+6:7	intval	"56"	56
+6:10	semicolom	";"	
+6:11	procedure	"procedure"	
+8:10	id	"lol"	
+8:14	lbr	"("	
+8:15	id	"a"	
+8:16	colom	":"	
+8:17	integer	"integer"	
+8:24	rbr	")"	
+8:25	var	"var"	
+9:5	id	"f"	
+9:7	colom	":"	
+9:8	integer	"integer"	
+9:15	semicolom	";"	
+9:16	begin	"begin"	
+10:7	id	"aaa_lol"	
+11:10	ass	":="	
+11:13	intval	"3"	3
+11:15	end	"end"	
+12:5	id	"lol"	
+12:9	semicolom	";"	
+12:10	begin	"begin"	
+13:5	id	"a"	
 14:3	ass	":="	
-14:5	intval	"12B"	10
-14:8	end	"end"	
-15:3	id	"Main"	
-15:8	dot	"."	
-15:9	eof		
+14:5	id	"lol"	
+14:8	lbr	"("	
+14:9	intval	"3"	3
+14:10	comma	","	
+14:11	intval	"5"	5
+14:13	rbr	")"	
+14:14	semicolom	";"	
+14:15	id	"b"	
+15:3	ass	":="	
+15:5	intval	"12B"	10
+15:8	end	"end"	
+16:3	id	"Main"	
+16:8	dot	"."	
+16:9	eof		
 Syntax analyze:
 1: <program>::=<module> dot 
 	2: <module>::=<moduleheading> <block> id 
@@ -118,7 +121,15 @@ Syntax analyze:
 									51: <proceduredeclaration>::=procedure id <fctproceduredeclaration1> 
 										53: <fctproceduredeclaration1>::=<mbformalparameters> <fctmbprocedurebody> 
 											56: <mbformalparameters>::=lbr <mbsectionlist> rbr 
-												58: <mbsectionlist>::=Lambda
+												57: <mbsectionlist>::=<formalparameters> 
+													60: <formalparameters>::=<mbspec> <section> <fctsection> 
+														64: <mbspec>::=Lambda
+														63: <section>::=<identlist> colom <type> 
+															42: <identlist>::=id <fctidentlist> 
+																43: <fctidentlist>::=Lambda
+															36: <type>::=<basetype> 
+																39: <basetype>::=integer 
+														62: <fctsection>::=Lambda
 											54: <fctmbprocedurebody>::=<block> id 
 												5: <block>::=<declarationparts> <fctdeclarationparts> 
 													9: <declarationparts>::=<declarationpart> <fctdeclarationpart> 
@@ -214,7 +225,10 @@ Block	IdName	Attributes
  Main	  arrv	Array	( 1:15, 1:20, 1:4 ): Real
  Main	    as	Array	( 1:15, 1:20, 1:4 ): Real
  Main	     b	Variable	: Real
+ Main	   lol	Procedure	( a ): Void
  Main	   str	Constant	56: Integer
+  lol	     a	Variable	: Integer
+  lol	     f	Variable	: Integer
 Code generation:
 (1) LABEL _MODULE_Main
 (2) LABEL _PROCEDURE_lol

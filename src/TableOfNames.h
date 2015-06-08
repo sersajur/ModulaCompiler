@@ -16,13 +16,6 @@
 
 class TableOfNames {
 public:
-	struct TNameId{
-		std::string name;
-		std::string blockName;
-		bool operator<(const TNameId& compId)const{
-			return ((blockName == compId.blockName) ? (name < compId.name) : (blockName < compId.blockName));
-		}
-	};
 	struct TRecord{
 		TNameId ID;
 		NameAttributes* attributes;
