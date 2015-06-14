@@ -69,9 +69,10 @@ inline std::string stringNSpace(long unsigned int i_n){
 }
 std::ostream& operator<<(std::ostream& io_os, const TableOfNames& i_table){
 	std::vector<long unsigned> maxLength{TableOfNames::HeaderLine[0].length(), TableOfNames::HeaderLine[1].length()};
+
 	for (auto& it : i_table.m_nameRecords){
 		maxLength[0] = ((it.first.blockName.length() > maxLength[0]) ? it.first.blockName.length() : maxLength[0]);
-		maxLength[1] = ((it.first.name.length() > maxLength[0]) ? it.first.blockName.length() : maxLength[1]);
+		maxLength[1] = ((it.first.name.length() > maxLength[0]) ? it.first.name.length() : maxLength[1]);
 	}
 
 	io_os << stringNSpace(maxLength[0] - TableOfNames::HeaderLine[0].length()) << TableOfNames::HeaderLine[0] << '\t';

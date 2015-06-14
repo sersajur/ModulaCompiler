@@ -5,7 +5,7 @@
  *      Author: sersajur
  */
 
-
+#include <string>
 #include "SemanticException.h"
 #include "ParseTree.h"
 #include <iostream> //debug
@@ -90,6 +90,11 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 		TNameId id{idToken.getLexeme(), i_currentBlock};
 		ModuleAttributes attributes{};
 		InsertToTableIfUndefinedOrThrowException(io_tableOfNames, {id, &attributes}, idToken);
+
+		TToken endIdToken = this->m_rule.getRightPart()[2].getAssociatedToken();
+		if (idToken.getLexeme() != endIdToken.getLexeme()){
+			throw SemanticException{endIdToken, std::string{"\"" + idToken.getLexeme() + "\" expected but \"" +  endIdToken.getLexeme() + "\" provided!"}};
+		}
 		//to declarationparts (if it exists):
 		m_childRules[1].DefinitionProcess(io_tableOfNames, id.name);
 	}
@@ -194,6 +199,12 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 	else if (*this == "proceduredeclaration"){
 		TToken idToken = m_rule.getRightPart()[1].getAssociatedToken();
 		std::string procName{idToken.getLexeme()};
+
+		ParseTree& procBody = (m_childRules[0].m_childRules[0] == "fctmbprocedurebody" ? m_childRules[0].m_childRules[0] : m_childRules[0].m_childRules[1]);
+		TToken endIdToken = procBody.m_rule.getRightPart()[1].getAssociatedToken();
+		if (idToken.getLexeme() != endIdToken.getLexeme()){
+			throw SemanticException{endIdToken, std::string{"\"" + idToken.getLexeme() + "\" expected but \"" +  endIdToken.getLexeme() + "\" provided!"}};
+		}
 		TNameId id{procName, i_currentBlock};
 	// 1. Returning type
 		NameAttributes::Type returningType{};
@@ -231,7 +242,64 @@ void ParseTree::DefinitionProcess(TableOfNames& io_tableOfNames, const std::stri
 	}
 }
 void ParseTree::UsageCheckProcess(TableOfNames& io_tableOfNames, const std::string i_currentBlock){
+	/*TODO:
+	 * 1. Check module and procedure ending id --- done in DefinitionProcess
+	 * 2. For each id in statement part check if it included to table of name
+	 * 3. Check if function call agree function specification
+	 * 4*. Type agreement check.
+	 */
+	if (*this == "program"){ //go to the main module block
+		TToken moduleId = this->m_childRules[0].m_childRules[0].m_rule.getRightPart()[1].getAssociatedToken();
+		m_childRules[0].m_childRules[1].UsageCheckProcess(io_tableOfNames, moduleId.getLexeme());
+	}else if (*this == "block"){ // recursion for block's declaration and go to the statement part
+		if (m_childRules[0] == "declarationparts"){
+			auto subTree = *this;
+			do{
+				subTree = subTree.m_childRules[0];
+				if (subTree.m_childRules[0].m_childRules[0] == "proceduredeclaration")
+					subTree.m_childRules[0].m_childRules[0].UsageCheckProcess(io_tableOfNames, i_currentBlock);
+				subTree = subTree.m_childRules[1];
+			}while(!subTree.m_rule.IsLambda());
+			if (m_childRules[1].m_childRules.size() != 0)
+				m_childRules[1].m_childRules[0].UsageCheckProcess(io_tableOfNames, i_currentBlock);
+		}
 
+		if (m_childRules[0] == "statementpart"){
+			m_childRules[0].UsageCheckProcess(io_tableOfNames, i_currentBlock);
+		}
+	}else if (*this == "proceduredeclaration"){
+		TToken idToken = m_rule.getRightPart()[1].getAssociatedToken();
+		ParseTree procBody{};
+		if (m_childRules[0].m_childRules[0] == "fctmbprocedurebody"){
+			procBody = m_childRules[0].m_childRules[0];
+		}else{
+			procBody = m_childRules[0].m_childRules[1];
+		}
+
+		if (procBody.m_childRules[0] == "block"){
+			procBody.m_childRules[0].UsageCheckProcess(io_tableOfNames, idToken.getLexeme());
+		}else{
+			procBody.m_childRules[1].UsageCheckProcess(io_tableOfNames, idToken.getLexeme());
+		}
+	}else if (*this == "statementpart"){ //iterate statements
+		auto subTree = *this;
+		do{
+			subTree = subTree.m_childRules[0];
+			subTree.m_childRules[0].UsageCheckProcess(io_tableOfNames, i_currentBlock);
+			subTree = subTree.m_childRules[1];
+		}while(!subTree.m_rule.IsLambda());
+	}else{ // recursive descent for statement tree (check each id)
+		for (auto ruleElement : m_rule.getRightPart()){
+			if (ruleElement.IsTerminal() && ruleElement.getTerminal() == TToken::TTokenClass::_id){
+				TToken idToken = ruleElement.getAssociatedToken();
+				if (!io_tableOfNames.IsDeclared({idToken.getLexeme(), i_currentBlock})){
+					throw SemanticException{idToken, "is not declared!"};
+				}
+			}
+		}
+		for (auto& it : m_childRules)
+			it.UsageCheckProcess(io_tableOfNames, i_currentBlock);
+	}
 }
 TableOfNames ParseTree::SemanticAnalyze(){
 	TableOfNames tableOfNames{};

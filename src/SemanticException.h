@@ -17,6 +17,7 @@ class SemanticException: public CompileException {
 public:
 	SemanticException(const std::string& i_reason);
 	SemanticException(const TToken& i_problemToken, const char* i_reason);
+	SemanticException(const TToken& i_problemToken, const std::string& i_reason);
 	virtual ~SemanticException();
 };
 

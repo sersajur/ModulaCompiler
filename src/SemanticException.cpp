@@ -16,7 +16,10 @@ SemanticException::SemanticException(const TToken& i_problemToken, const char* i
 CompileException{i_problemToken, i_reason}{
 
 }
+SemanticException::SemanticException(const TToken& i_problemToken, const std::string& i_reason):
+CompileException{i_problemToken, i_reason.c_str()}{
 
+}
 SemanticException::~SemanticException(){
 
 }
