@@ -35,12 +35,7 @@ Lexical analyze:
 6:10	semicolom	";"	
 6:11	procedure	"procedure"	
 8:10	id	"lol"	
-8:14	lbr	"("	
-8:15	id	"a"	
-8:16	colom	":"	
-8:17	integer	"integer"	
-8:24	rbr	")"	
-8:25	var	"var"	
+8:14	var	"var"	
 9:5	id	"aaa_lol"	
 9:13	colom	":"	
 9:14	integer	"integer"	
@@ -48,21 +43,14 @@ Lexical analyze:
 9:22	begin	"begin"	
 10:7	id	"aaa_lol"	
 11:10	ass	":="	
-11:13	id	"a"	
-11:15	end	"end"	
+11:13	intval	"56"	56
+11:16	end	"end"	
 12:5	id	"lol"	
 12:9	semicolom	";"	
 12:10	begin	"begin"	
-13:5	id	"a"	
-14:3	ass	":="	
-14:5	id	"lol"	
-14:8	lbr	"("	
-14:9	intval	"3"	3
-14:10	comma	","	
-14:11	intval	"5"	5
-14:13	rbr	")"	
-14:14	semicolom	";"	
-14:15	id	"b"	
+13:5	id	"lol"	
+14:5	semicolom	";"	
+14:6	id	"b"	
 15:3	ass	":="	
 15:5	id	"as"	
 15:7	lbrind	"["	
@@ -128,17 +116,7 @@ Syntax analyze:
 							9: <declarationparts>::=<declarationpart> <fctdeclarationpart> 
 								14: <declarationpart>::=<proceduredeclaration> semicolom 
 									51: <proceduredeclaration>::=procedure id <fctproceduredeclaration1> 
-										53: <fctproceduredeclaration1>::=<mbformalparameters> <fctmbprocedurebody> 
-											56: <mbformalparameters>::=lbr <mbsectionlist> rbr 
-												57: <mbsectionlist>::=<formalparameters> 
-													60: <formalparameters>::=<mbspec> <section> <fctsection> 
-														64: <mbspec>::=Lambda
-														63: <section>::=<identlist> colom <type> 
-															42: <identlist>::=id <fctidentlist> 
-																43: <fctidentlist>::=Lambda
-															36: <type>::=<basetype> 
-																39: <basetype>::=integer 
-														62: <fctsection>::=Lambda
+										52: <fctproceduredeclaration1>::=<fctmbprocedurebody> 
 											54: <fctmbprocedurebody>::=<block> id 
 												5: <block>::=<declarationparts> <fctdeclarationparts> 
 													9: <declarationparts>::=<declarationpart> <fctdeclarationpart> 
@@ -162,9 +140,9 @@ Syntax analyze:
 																		85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
 																			89: <SimpleExpression>::=<term> <fcttermadd> 
 																				96: <term>::=<factor> <fcttermmul> 
-																					102: <factor>::=<variable> 
-																						79: <variable>::=id <fctvar> 
-																							81: <fctvar>::=Lambda
+																					100: <factor>::=<unsignedconstant> 
+																						30: <unsignedconstant>::=<number> 
+																							34: <number>::=intval 
 																					98: <fcttermmul>::=Lambda
 																				92: <fcttermadd>::=Lambda
 																			87: <fctsimpleexpression>::=Lambda
@@ -173,44 +151,9 @@ Syntax analyze:
 			8: <fctdeclarationparts>::=<statementpart> end 
 				25: <statementpart>::=begin <statementsequence> 
 					71: <statementsequence>::=<statement> <fctstatement> 
-						74: <statement>::=<assignment> 
-							78: <assignment>::=<variable> ass <expression> 
-								79: <variable>::=id <fctvar> 
-									81: <fctvar>::=Lambda
-								85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-									89: <SimpleExpression>::=<term> <fcttermadd> 
-										96: <term>::=<factor> <fcttermmul> 
-											101: <factor>::=<functioncall> 
-												104: <functioncall>::=id <parameterlist> 
-													105: <parameterlist>::=lbr <fctparameters> rbr 
-														106: <fctparameters>::=<parameters> 
-															108: <parameters>::=<parameter> <fctparameter> 
-																111: <parameter>::=<expression> 
-																	85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																		89: <SimpleExpression>::=<term> <fcttermadd> 
-																			96: <term>::=<factor> <fcttermmul> 
-																				100: <factor>::=<unsignedconstant> 
-																					30: <unsignedconstant>::=<number> 
-																						34: <number>::=intval 
-																				98: <fcttermmul>::=Lambda
-																			92: <fcttermadd>::=Lambda
-																		87: <fctsimpleexpression>::=Lambda
-																109: <fctparameter>::=comma <parameters> 
-																	108: <parameters>::=<parameter> <fctparameter> 
-																		111: <parameter>::=<expression> 
-																			85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																				89: <SimpleExpression>::=<term> <fcttermadd> 
-																					96: <term>::=<factor> <fcttermmul> 
-																						100: <factor>::=<unsignedconstant> 
-																							30: <unsignedconstant>::=<number> 
-																								34: <number>::=intval 
-																						98: <fcttermmul>::=Lambda
-																					92: <fcttermadd>::=Lambda
-																				87: <fctsimpleexpression>::=Lambda
-																		110: <fctparameter>::=Lambda
-											98: <fcttermmul>::=Lambda
-										92: <fcttermadd>::=Lambda
-									87: <fctsimpleexpression>::=Lambda
+						75: <statement>::=<procedurecall> 
+							122: <procedurecall>::=id <mbparameterlist> 
+								124: <mbparameterlist>::=Lambda
 						72: <fctstatement>::=semicolom <statementsequence> 
 							71: <statementsequence>::=<statement> <fctstatement> 
 								74: <statement>::=<assignment> 
@@ -276,29 +219,24 @@ Block	 IdName	Attributes
  Main	   arrv	Array	( 1:15, 1:20, 1:4 ): Real
  Main	     as	Array	( 1:15, 1:20, 1:4 ): Real
  Main	      b	Variable	: Real
- Main	    lol	Procedure	( a ): Void
+ Main	    lol	Procedure	 ): Void
  Main	    str	Constant	56: Integer
-  lol	      a	Variable	: Integer
   lol	aaa_lol	Variable	: Integer
 Code generation:
 (1) LABEL _MODULE_Main
 (2) LABEL _PROCEDURE_lol
-(3) = aaa_lol a
+(3) = aaa_lol 56
 (4) RET
 (5) LABEL _MODULESTART
-(6) PUSH 3
-(7) PUSH 5
-(8) CALL _PROCEDURE_lol
-(9) POP
-(10) = a (9)
-(11) + 1 5
-(12) BOUNDS as 0
-(13) BOUNDS as 1
-(14) * 4 (13)
-(15) + (11) (14)
-(16) BOUNDS as 2
-(17) * 2 (16)
-(18) + (15) (17)
-(19) ADDR as (18)
-(20) = b (19)
+(6) CALL _PROCEDURE_lol
+(7) + 1 5
+(8) BOUNDS as 0
+(9) BOUNDS as 1
+(10) * 4 (9)
+(11) + (7) (10)
+(12) BOUNDS as 2
+(13) * 2 (12)
+(14) + (11) (13)
+(15) ADDR as (14)
+(16) = b (15)
 

@@ -288,6 +288,12 @@ void ParseTree::UsageCheckProcess(TableOfNames& io_tableOfNames, const std::stri
 			subTree.m_childRules[0].UsageCheckProcess(io_tableOfNames, i_currentBlock);
 			subTree = subTree.m_childRules[1];
 		}while(!subTree.m_rule.IsLambda());
+//	}else if ((*this == "procedurecall") || (*this == "functioncall")){
+//		TToken idToken = m_rule.getRightPart()[0].getAssociatedToken();
+//		auto procName = idToken.getLexeme();
+//		if (io_tableOfNames.getRecord({procName, i_currentBlock}).attributes->getNameType() != NameAttributes::NameType::Procedure)
+//			throw SemanticException{idToken, "is not a procedure!"};
+//		m_childRules[0].UsageCheckProcess(io_tableOfNames, i_currentBlock);
 	}else{ // recursive descent for statement tree (check each id)
 		for (auto ruleElement : m_rule.getRightPart()){
 			if (ruleElement.IsTerminal() && ruleElement.getTerminal() == TToken::TTokenClass::_id){
@@ -312,25 +318,37 @@ TableOfNames ParseTree::SemanticAnalyze(){
 // reasoning: it's not tree doing job on itself,
 // but outer entity (some ICodeGenerator) doing tree traversal
 // as of right now, it breaches S in SOLID
-std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode& code){
+std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode& code, const std::string& i_currentBlock){
     switch(m_rule.m_number)
     {
     case 2: // module start
-        code.emitCode("LABEL _MODULE_" + m_childRules[0].m_rule.m_rightPart[1].getAssociatedToken().getLexeme());
+    {
+    	std::string moduleName = m_childRules[0].m_rule.m_rightPart[1].getAssociatedToken().getLexeme();
+        code.emitCode("LABEL _MODULE_" + moduleName);
         if (m_childRules[1].m_rule.m_number == 5) {
-            m_childRules[1].m_childRules[0].GenerateCode(i_tableOfNames, code);
+            m_childRules[1].m_childRules[0].GenerateCode(i_tableOfNames, code, moduleName);
             code.emitCode("LABEL _MODULESTART");
-            m_childRules[1].m_childRules[1].GenerateCode(i_tableOfNames, code);
+            m_childRules[1].m_childRules[1].GenerateCode(i_tableOfNames, code, moduleName);
         } else {
             code.emitCode("LABEL _MODULESTART");
-            m_childRules[1].m_childRules[0].GenerateCode(i_tableOfNames, code);
+            m_childRules[1].m_childRules[0].GenerateCode(i_tableOfNames, code, moduleName);
         }
         break;
+    }
     case 51: // procedure declaration
-        code.emitCode("LABEL _PROCEDURE_" + m_rule.m_rightPart[1].getAssociatedToken().getLexeme());
-        m_childRules[0].GenerateCode(i_tableOfNames, code);
+    {
+    	std::string procName = m_rule.m_rightPart[1].getAssociatedToken().getLexeme();
+        code.emitCode("LABEL _PROCEDURE_" + procName);
+//        ProcedureAttributes* attributes = dynamic_cast<ProcedureAttributes*>(i_tableOfNames.getRecord({procName, i_currentBlock}).attributes);
+//        for (auto param : attributes->getDesiredInput()){
+//        	std::string resultReference = code.emitCode("POP");
+//        	code.emitCode("= " + param.name + " " + resultReference);
+//        }
+
+        m_childRules[0].GenerateCode(i_tableOfNames, code, procName);
         code.emitCode("RET");
         break;
+    }
     case 29: // bool literal
     case 31: // string literal, not working
     case 34: // int literal
@@ -339,7 +357,7 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
     case 28: // signed variable or literal
     {
         auto sign = m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
-        auto number = m_childRules[1].GenerateCode(i_tableOfNames, code);
+        auto number = m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
         return code.emitCode(sign + " 0 " + number);
     }
     case 79: // variable
@@ -353,7 +371,7 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
             int index = 0;
             std::string last;
             while (true) {
-                auto expr = indexExpr.m_childRules[0].GenerateCode(i_tableOfNames, code);
+                auto expr = indexExpr.m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
                 auto prev = code.emitCode("BOUNDS " + id + " " + std::to_string(index));
                 if (index) {
                     prev = code.emitCode("* " + expr + " " + prev);
@@ -374,33 +392,33 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
     }
     case 78: // assignment
     {
-        auto varName = m_childRules[0].GenerateCode(i_tableOfNames, code);
-        auto varExpr = m_childRules[1].GenerateCode(i_tableOfNames, code);
+        auto varName = m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
+        auto varExpr = m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
         return code.emitCode("= " + varName + " " + varExpr);
     }
     case 85: // expression
     {
-        auto leftRelationPart = m_childRules[0].GenerateCode(i_tableOfNames, code);
+        auto leftRelationPart = m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
         if (m_childRules[1].m_rule.IsLambda())
             return leftRelationPart;
         auto op = m_childRules[1].m_childRules[0].m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
-        auto rightRelationPart = m_childRules[1].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code);
+        auto rightRelationPart = m_childRules[1].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
         return code.emitCode(op + " " + leftRelationPart + " " + rightRelationPart);
     }
     case 89: // "simple"/addition expression
     {
-        auto leftPart = m_childRules[0]/*.m_childRules[0]*/.GenerateCode(i_tableOfNames, code);
+        auto leftPart = m_childRules[0]/*.m_childRules[0]*/.GenerateCode(i_tableOfNames, code, i_currentBlock);
         if (m_childRules[1].m_rule.IsLambda())
             return leftPart;
-        auto rightPart = m_childRules[1].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code);
+        auto rightPart = m_childRules[1].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
         auto op = m_childRules[1].m_childRules[0].m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
         return code.emitCode(op + " " + leftPart + " " + rightPart);
     }
     case 90: // signed expressions
     {
         auto sign = m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
-        auto expr = m_childRules[1].GenerateCode(i_tableOfNames, code);
-        auto rightPart = m_childRules[2].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code);
+        auto expr = m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
+        auto rightPart = m_childRules[2].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
         auto op = m_childRules[2].m_childRules[0].m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
         auto leftPart = code.emitCode(sign + " 0 " + expr);
         return code.emitCode(op + " " + leftPart + " " + rightPart);
@@ -408,10 +426,10 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
         break;
     case 96: // multiplication expression
     {
-        auto leftPart = m_childRules[0]/*.m_childRules[0].m_childRules[0]*/.GenerateCode(i_tableOfNames, code);
+        auto leftPart = m_childRules[0]/*.m_childRules[0].m_childRules[0]*/.GenerateCode(i_tableOfNames, code, i_currentBlock);
         if (m_childRules[1].m_rule.IsLambda())
             return leftPart;
-        auto rightPart = m_childRules[1].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code);
+        auto rightPart = m_childRules[1].m_childRules[0].m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
         auto op = m_childRules[1].m_childRules[0].m_childRules[0].m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
         return code.emitCode(op + " " + leftPart + " " + rightPart);
     }
@@ -420,41 +438,41 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
         auto node = m_childRules[0];
         while (node.m_childRules.size() != 0)
             node = node.m_childRules[0];
-        return node.GenerateCode(i_tableOfNames, code);
+        return node.GenerateCode(i_tableOfNames, code, i_currentBlock);
     }
         //return m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code);
     case 102: // var in multiplication
-        return m_childRules[0].GenerateCode(i_tableOfNames, code);
+        return m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
     case 125: // if
     {
         if (m_childRules[2].m_rule.m_number == 126){ // short if
             auto labelAfter = code.getNextLabel();
-            auto expr = m_childRules[0].GenerateCode(i_tableOfNames, code);
+            auto expr = m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
             code.emitCode("IFFALSE " + expr + " " + labelAfter);
-            m_childRules[1].GenerateCode(i_tableOfNames, code);
+            m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
             code.emitCode("LABEL " + labelAfter);
         } else if (m_childRules[2].m_rule.m_number == 128) { // long if
             auto labelAfter = code.getNextLabel();
             auto labelElse = code.getNextLabel();
-            auto expr = m_childRules[0].GenerateCode(i_tableOfNames, code);
+            auto expr = m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
             code.emitCode("IFFALSE " + expr + " " + labelElse);
-            m_childRules[1].GenerateCode(i_tableOfNames, code);
+            m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
             code.emitCode("GOTO " + labelAfter);
             code.emitCode("LABEL " + labelElse);
-            m_childRules[2].m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code);
+            m_childRules[2].m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
             code.emitCode("LABEL " + labelAfter);
         } else if (m_childRules[2].m_rule.m_number == 127) { // elsif
             auto labelAfter = code.getNextLabel();
-            auto expr = m_childRules[0].GenerateCode(i_tableOfNames, code);
+            auto expr = m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
             code.emitCode("IFFALSE " + expr + " " + labelAfter);
-            m_childRules[1].GenerateCode(i_tableOfNames, code);
+            m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
             code.emitCode("GOTO " + labelAfter);
             auto elsif = m_childRules[2].m_childRules[0];
             while (!elsif.m_rule.IsLambda()) {
                 auto labelElse = code.getNextLabel();
-                auto expr = elsif.m_childRules[0].GenerateCode(i_tableOfNames, code);
+                auto expr = elsif.m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
                 code.emitCode("IFFALSE " + expr + " " + labelElse);
-                elsif.m_childRules[1].GenerateCode(i_tableOfNames, code);
+                elsif.m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
                 code.emitCode("GOTO " + labelAfter);
                 code.emitCode("LABEL " + labelElse);
                 elsif = elsif.m_childRules[2];
@@ -470,14 +488,14 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
     {
         auto labelForStart = code.getNextLabel();
         auto labelForEnd = code.getNextLabel();
-        auto iterator = m_childRules[0].GenerateCode(i_tableOfNames, code);
-        auto start = m_childRules[1].GenerateCode(i_tableOfNames, code);
-        auto end = m_childRules[2].GenerateCode(i_tableOfNames, code);
+        auto iterator = m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
+        auto start = m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
+        auto end = m_childRules[2].GenerateCode(i_tableOfNames, code, i_currentBlock);
         code.emitCode("= " + iterator + " " + start);
         code.emitCode("LABEL " + labelForStart);
         auto condition = code.emitCode("< " + iterator + " " + end);
         code.emitCode("IFFALSE " + condition + " " + labelForEnd);
-        m_childRules[3].GenerateCode(i_tableOfNames, code);
+        m_childRules[3].GenerateCode(i_tableOfNames, code, i_currentBlock);
         code.emitCode("GOTO " + labelForStart);
         code.emitCode("LABEL " + labelForEnd);
     }
@@ -485,24 +503,33 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
     case 104: // function call
     case 122: // procedure call
     {
-        auto funcName = m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
-        auto parameters = m_childRules[0].m_childRules[0].m_childRules[0];
-        if (m_rule.m_number == 122) parameters = parameters.m_childRules[0];
-        while (true) {
-            auto param = parameters.m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code);
-            code.emitCode("PUSH " + param);
-            if (parameters.m_childRules[1].m_rule.IsLambda()) break;
-            parameters = parameters.m_childRules[1].m_childRules[0];
+        TToken funToken = m_rule.m_rightPart[0].getAssociatedToken();
+    	auto funcName = funToken.getLexeme();
+        ProcedureAttributes* attributes = dynamic_cast<ProcedureAttributes*>(i_tableOfNames.getRecord({funcName, i_currentBlock}).attributes);
+        unsigned actualParNumber{0};
+        if ((*this == "functioncall" && !m_childRules[0].m_childRules[0].m_rule.IsLambda()) || (*this == "procedurecall" && !m_childRules[0].m_rule.IsLambda() && !m_childRules[0].m_childRules[0].m_childRules[0].m_rule.IsLambda())){
+        	auto parameters = m_childRules[0].m_childRules[0].m_childRules[0];
+        	if (m_rule.m_number == 122) parameters = parameters.m_childRules[0];
+        	while (true) {
+        		actualParNumber++;
+        		auto param = parameters.m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
+        		code.emitCode("PUSH " + param);
+        		if (parameters.m_childRules[1].m_rule.IsLambda()) break;
+        		parameters = parameters.m_childRules[1].m_childRules[0];
+        	}
         }
+        if (actualParNumber != attributes->getDesiredInput().size())
+        	throw SemanticException{funToken, "is used with wrong number of parameters"};
+
         code.emitCode("CALL _PROCEDURE_" + funcName);
         if (m_rule.m_number == 104)
             return code.emitCode("POP");
     }
         break;
     default:
-        if (m_childRules.size() == 1) return m_childRules[0].GenerateCode(i_tableOfNames, code);
+        if (m_childRules.size() == 1) return m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
         for (auto& subtree : m_childRules)
-            subtree.GenerateCode(i_tableOfNames, code);
+            subtree.GenerateCode(i_tableOfNames, code, i_currentBlock);
         break;
     }
     return "";

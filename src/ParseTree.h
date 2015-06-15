@@ -35,7 +35,7 @@ public:
 	void setChildren(const std::vector<ParseTree>& i_children);
 	void AssociateWithInput(const std::vector<TToken>& i_input);
 	TableOfNames SemanticAnalyze();
-	std::string GenerateCode(const TableOfNames& i_tableOfNames, ByteCode& code);
+	std::string GenerateCode(const TableOfNames& i_tableOfNames, ByteCode& code, const std::string& i_currentBlock = "");
 
 	friend std::ostream& operator<<(std::ostream& io_os, const ParseTree& i_parseTree);
 

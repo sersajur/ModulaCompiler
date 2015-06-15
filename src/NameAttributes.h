@@ -56,6 +56,7 @@ public:
 	ProcedureAttributes(const std::vector<TNameId>& i_inputParams, const NameAttributes::Type& i_returningType = NameAttributes::Type::Void):
 		m_returningtype{i_returningType}, m_inputParameters{i_inputParams} {}
 	std::string getPrintableText() const override;
+	std::vector<TNameId> getDesiredInput()const { return m_inputParameters; }
 private:
 	NameAttributes::Type m_returningtype;
 	std::vector<TNameId> m_inputParameters;
