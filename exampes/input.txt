@@ -5,12 +5,12 @@ module Main;
 	const 
 		str = 56;
 	
-	procedure lol
+	procedure lol()
 		var aaa_lol:integer;
 		begin
 			aaa_lol := 56
 		end lol;
 begin
- 	lol;
- 	b:=as[1+5, 4, 2]
+ 	lol();
+ 	arrv[1][2] := 4
 end Main.

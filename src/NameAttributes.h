@@ -73,6 +73,7 @@ public:
 	ArrayAttributes(const NameAttributes::Type& i_type, const std::vector<TDimBoundary>& i_dimBoundaties):
 		m_type{i_type}, m_dimBoundaries{i_dimBoundaties} {}
 	std::string getPrintableText() const override;
+	std::vector<TDimBoundary> getDimBoundaries()const {return m_dimBoundaries;}
 private:
 	NameAttributes::Type m_type;
 	std::vector<TDimBoundary> m_dimBoundaries;

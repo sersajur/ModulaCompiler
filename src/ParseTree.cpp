@@ -288,12 +288,12 @@ void ParseTree::UsageCheckProcess(TableOfNames& io_tableOfNames, const std::stri
 			subTree.m_childRules[0].UsageCheckProcess(io_tableOfNames, i_currentBlock);
 			subTree = subTree.m_childRules[1];
 		}while(!subTree.m_rule.IsLambda());
-//	}else if ((*this == "procedurecall") || (*this == "functioncall")){
-//		TToken idToken = m_rule.getRightPart()[0].getAssociatedToken();
-//		auto procName = idToken.getLexeme();
-//		if (io_tableOfNames.getRecord({procName, i_currentBlock}).attributes->getNameType() != NameAttributes::NameType::Procedure)
-//			throw SemanticException{idToken, "is not a procedure!"};
-//		m_childRules[0].UsageCheckProcess(io_tableOfNames, i_currentBlock);
+	}else if ((*this == "procedurecall") || (*this == "functioncall")){
+		TToken idToken = m_rule.getRightPart()[0].getAssociatedToken();
+		auto procName = idToken.getLexeme();
+		if (io_tableOfNames.getRecord({procName, i_currentBlock}).attributes->getNameType() != NameAttributes::NameType::Procedure)
+			throw SemanticException{idToken, "is not a procedure!"};
+		m_childRules[0].UsageCheckProcess(io_tableOfNames, i_currentBlock);
 	}else{ // recursive descent for statement tree (check each id)
 		for (auto ruleElement : m_rule.getRightPart()){
 			if (ruleElement.IsTerminal() && ruleElement.getTerminal() == TToken::TTokenClass::_id){
@@ -339,11 +339,11 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
     {
     	std::string procName = m_rule.m_rightPart[1].getAssociatedToken().getLexeme();
         code.emitCode("LABEL _PROCEDURE_" + procName);
-//        ProcedureAttributes* attributes = dynamic_cast<ProcedureAttributes*>(i_tableOfNames.getRecord({procName, i_currentBlock}).attributes);
-//        for (auto param : attributes->getDesiredInput()){
-//        	std::string resultReference = code.emitCode("POP");
-//        	code.emitCode("= " + param.name + " " + resultReference);
-//        }
+        ProcedureAttributes* attributes = dynamic_cast<ProcedureAttributes*>(i_tableOfNames.getRecord({procName, i_currentBlock}).attributes);
+        for (auto param : attributes->getDesiredInput()){
+        	std::string resultReference = code.emitCode("POP");
+        	code.emitCode("= " + param.name + " " + resultReference);
+        }
 
         m_childRules[0].GenerateCode(i_tableOfNames, code, procName);
         code.emitCode("RET");
@@ -362,13 +362,20 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
     }
     case 79: // variable
     {
-        auto id = m_rule.m_rightPart[0].getAssociatedToken().getLexeme();
-        if (m_childRules[0].m_rule.IsLambda()) return id;
+        TToken idToken = m_rule.m_rightPart[0].getAssociatedToken();
+    	auto id = idToken.getLexeme();
+        if (m_childRules[0].m_rule.IsLambda()){
+        	if (i_tableOfNames.getRecord({id, i_currentBlock}).attributes->getNameType() != NameAttributes::NameType::Variable)
+        		throw SemanticException{idToken, "identifier wrong usage!"};
+        	return id;
+        }
         // array indeces
+        if (i_tableOfNames.getRecord({id, i_currentBlock}).attributes->getNameType() != NameAttributes::NameType::Array)
+        	throw SemanticException{idToken, "identifier wrong usage!"};
         auto indexExpr = m_childRules[0].m_childRules[0];//nIndices
         auto rest = m_childRules[0].m_childRules[1];//nVar1
+        unsigned index = 0;
         while (true) {
-            int index = 0;
             std::string last;
             while (true) {
                 auto expr = indexExpr.m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
@@ -388,6 +395,9 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
             indexExpr = rest.m_childRules[0];
             rest = rest.m_childRules[1];
         }
+        ArrayAttributes* attributes = dynamic_cast<ArrayAttributes*>(i_tableOfNames.getRecord({idToken.getLexeme(), i_currentBlock}).attributes);
+        if (index != attributes->getDimBoundaries().size())
+        	throw SemanticException{idToken, "array dimension mismatch!"};
         return id;
     }
     case 78: // assignment

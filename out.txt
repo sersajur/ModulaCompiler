@@ -35,7 +35,9 @@ Lexical analyze:
 6:10	semicolom	";"	
 6:11	procedure	"procedure"	
 8:10	id	"lol"	
-8:14	var	"var"	
+8:14	lbr	"("	
+8:15	rbr	")"	
+8:16	var	"var"	
 9:5	id	"aaa_lol"	
 9:13	colom	":"	
 9:14	integer	"integer"	
@@ -49,20 +51,19 @@ Lexical analyze:
 12:9	semicolom	";"	
 12:10	begin	"begin"	
 13:5	id	"lol"	
-14:5	semicolom	";"	
-14:6	id	"b"	
-15:3	ass	":="	
-15:5	id	"as"	
-15:7	lbrind	"["	
-15:8	intval	"1"	1
-15:9	add	"+"	
-15:10	intval	"5"	5
-15:11	comma	","	
-15:12	intval	"4"	4
-15:14	comma	","	
-15:15	intval	"2"	2
-15:17	rbrind	"]"	
-15:18	end	"end"	
+14:5	lbr	"("	
+14:6	rbr	")"	
+14:7	semicolom	";"	
+14:8	id	"arrv"	
+15:6	lbrind	"["	
+15:7	intval	"1"	1
+15:8	rbrind	"]"	
+15:9	lbrind	"["	
+15:10	intval	"2"	2
+15:11	rbrind	"]"	
+15:12	ass	":="	
+15:15	intval	"4"	4
+15:17	end	"end"	
 16:3	id	"Main"	
 16:8	dot	"."	
 16:9	eof		
@@ -116,7 +117,9 @@ Syntax analyze:
 							9: <declarationparts>::=<declarationpart> <fctdeclarationpart> 
 								14: <declarationpart>::=<proceduredeclaration> semicolom 
 									51: <proceduredeclaration>::=procedure id <fctproceduredeclaration1> 
-										52: <fctproceduredeclaration1>::=<fctmbprocedurebody> 
+										53: <fctproceduredeclaration1>::=<mbformalparameters> <fctmbprocedurebody> 
+											56: <mbformalparameters>::=lbr <mbsectionlist> rbr 
+												58: <mbsectionlist>::=Lambda
 											54: <fctmbprocedurebody>::=<block> id 
 												5: <block>::=<declarationparts> <fctdeclarationparts> 
 													9: <declarationparts>::=<declarationpart> <fctdeclarationpart> 
@@ -153,61 +156,45 @@ Syntax analyze:
 					71: <statementsequence>::=<statement> <fctstatement> 
 						75: <statement>::=<procedurecall> 
 							122: <procedurecall>::=id <mbparameterlist> 
-								124: <mbparameterlist>::=Lambda
+								123: <mbparameterlist>::=<parameterlist> 
+									105: <parameterlist>::=lbr <fctparameters> rbr 
+										107: <fctparameters>::=Lambda
 						72: <fctstatement>::=semicolom <statementsequence> 
 							71: <statementsequence>::=<statement> <fctstatement> 
 								74: <statement>::=<assignment> 
 									78: <assignment>::=<variable> ass <expression> 
 										79: <variable>::=id <fctvar> 
-											81: <fctvar>::=Lambda
+											80: <fctvar>::=lbrind <indices> rbrind <fctvar> 
+												82: <indices>::=<expression> <fctexpr> 
+													85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+														89: <SimpleExpression>::=<term> <fcttermadd> 
+															96: <term>::=<factor> <fcttermmul> 
+																100: <factor>::=<unsignedconstant> 
+																	30: <unsignedconstant>::=<number> 
+																		34: <number>::=intval 
+																98: <fcttermmul>::=Lambda
+															92: <fcttermadd>::=Lambda
+														87: <fctsimpleexpression>::=Lambda
+													84: <fctexpr>::=Lambda
+												80: <fctvar>::=lbrind <indices> rbrind <fctvar> 
+													82: <indices>::=<expression> <fctexpr> 
+														85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+															89: <SimpleExpression>::=<term> <fcttermadd> 
+																96: <term>::=<factor> <fcttermmul> 
+																	100: <factor>::=<unsignedconstant> 
+																		30: <unsignedconstant>::=<number> 
+																			34: <number>::=intval 
+																	98: <fcttermmul>::=Lambda
+																92: <fcttermadd>::=Lambda
+															87: <fctsimpleexpression>::=Lambda
+														84: <fctexpr>::=Lambda
+													81: <fctvar>::=Lambda
 										85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
 											89: <SimpleExpression>::=<term> <fcttermadd> 
 												96: <term>::=<factor> <fcttermmul> 
-													102: <factor>::=<variable> 
-														79: <variable>::=id <fctvar> 
-															80: <fctvar>::=lbrind <indices> rbrind <fctvar> 
-																82: <indices>::=<expression> <fctexpr> 
-																	85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																		89: <SimpleExpression>::=<term> <fcttermadd> 
-																			96: <term>::=<factor> <fcttermmul> 
-																				100: <factor>::=<unsignedconstant> 
-																					30: <unsignedconstant>::=<number> 
-																						34: <number>::=intval 
-																				98: <fcttermmul>::=Lambda
-																			91: <fcttermadd>::=<mbaddition> 
-																				95: <mbaddition>::=<addoperator> <term> <fcttermadd> 
-																					116: <addoperator>::=add 
-																					96: <term>::=<factor> <fcttermmul> 
-																						100: <factor>::=<unsignedconstant> 
-																							30: <unsignedconstant>::=<number> 
-																								34: <number>::=intval 
-																						98: <fcttermmul>::=Lambda
-																					92: <fcttermadd>::=Lambda
-																		87: <fctsimpleexpression>::=Lambda
-																	83: <fctexpr>::=comma <indices> 
-																		82: <indices>::=<expression> <fctexpr> 
-																			85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																				89: <SimpleExpression>::=<term> <fcttermadd> 
-																					96: <term>::=<factor> <fcttermmul> 
-																						100: <factor>::=<unsignedconstant> 
-																							30: <unsignedconstant>::=<number> 
-																								34: <number>::=intval 
-																						98: <fcttermmul>::=Lambda
-																					92: <fcttermadd>::=Lambda
-																				87: <fctsimpleexpression>::=Lambda
-																			83: <fctexpr>::=comma <indices> 
-																				82: <indices>::=<expression> <fctexpr> 
-																					85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
-																						89: <SimpleExpression>::=<term> <fcttermadd> 
-																							96: <term>::=<factor> <fcttermmul> 
-																								100: <factor>::=<unsignedconstant> 
-																									30: <unsignedconstant>::=<number> 
-																										34: <number>::=intval 
-																								98: <fcttermmul>::=Lambda
-																							92: <fcttermadd>::=Lambda
-																						87: <fctsimpleexpression>::=Lambda
-																					84: <fctexpr>::=Lambda
-																81: <fctvar>::=Lambda
+													100: <factor>::=<unsignedconstant> 
+														30: <unsignedconstant>::=<number> 
+															34: <number>::=intval 
 													98: <fcttermmul>::=Lambda
 												92: <fcttermadd>::=Lambda
 											87: <fctsimpleexpression>::=Lambda
@@ -223,20 +210,5 @@ Block	 IdName	Attributes
  Main	    str	Constant	56: Integer
   lol	aaa_lol	Variable	: Integer
 Code generation:
-(1) LABEL _MODULE_Main
-(2) LABEL _PROCEDURE_lol
-(3) = aaa_lol 56
-(4) RET
-(5) LABEL _MODULESTART
-(6) CALL _PROCEDURE_lol
-(7) + 1 5
-(8) BOUNDS as 0
-(9) BOUNDS as 1
-(10) * 4 (9)
-(11) + (7) (10)
-(12) BOUNDS as 2
-(13) * 2 (12)
-(14) + (11) (13)
-(15) ADDR as (14)
-(16) = b (15)
-
+Semantic error:
+14:8 in 'arrv' <-- array dimension mismatch!
