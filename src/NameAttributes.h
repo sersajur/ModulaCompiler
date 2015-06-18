@@ -57,6 +57,7 @@ public:
 		m_returningtype{i_returningType}, m_inputParameters{i_inputParams} {}
 	std::string getPrintableText() const override;
 	std::vector<TNameId> getDesiredInput()const { return m_inputParameters; }
+	Type getReturningType()const { return m_returningtype; }
 private:
 	NameAttributes::Type m_returningtype;
 	std::vector<TNameId> m_inputParameters;

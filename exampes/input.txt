@@ -11,6 +11,6 @@ module Main;
 			aaa_lol := 56
 		end lol;
 begin
- 	lol();
+ 	a:=lol();
  	arrv[1][2][4] := 4
 end Main.

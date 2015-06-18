@@ -50,11 +50,13 @@ Lexical analyze:
 12:5	id	"lol"	
 12:9	semicolom	";"	
 12:10	begin	"begin"	
-13:5	id	"lol"	
-14:5	lbr	"("	
-14:6	rbr	")"	
-14:7	semicolom	";"	
-14:8	id	"arrv"	
+13:5	id	"a"	
+14:3	ass	":="	
+14:5	id	"lol"	
+14:8	lbr	"("	
+14:9	rbr	")"	
+14:10	semicolom	";"	
+14:11	id	"arrv"	
 15:6	lbrind	"["	
 15:7	intval	"1"	1
 15:8	rbrind	"]"	
@@ -157,11 +159,20 @@ Syntax analyze:
 			8: <fctdeclarationparts>::=<statementpart> end 
 				25: <statementpart>::=begin <statementsequence> 
 					71: <statementsequence>::=<statement> <fctstatement> 
-						75: <statement>::=<procedurecall> 
-							122: <procedurecall>::=id <mbparameterlist> 
-								123: <mbparameterlist>::=<parameterlist> 
-									105: <parameterlist>::=lbr <fctparameters> rbr 
-										107: <fctparameters>::=Lambda
+						74: <statement>::=<assignment> 
+							78: <assignment>::=<variable> ass <expression> 
+								79: <variable>::=id <fctvar> 
+									81: <fctvar>::=Lambda
+								85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+									89: <SimpleExpression>::=<term> <fcttermadd> 
+										96: <term>::=<factor> <fcttermmul> 
+											101: <factor>::=<functioncall> 
+												104: <functioncall>::=id <parameterlist> 
+													105: <parameterlist>::=lbr <fctparameters> rbr 
+														107: <fctparameters>::=Lambda
+											98: <fcttermmul>::=Lambda
+										92: <fcttermadd>::=Lambda
+									87: <fctsimpleexpression>::=Lambda
 						72: <fctstatement>::=semicolom <statementsequence> 
 							71: <statementsequence>::=<statement> <fctstatement> 
 								74: <statement>::=<assignment> 
@@ -225,21 +236,5 @@ Block	 IdName	Attributes
  Main	    str	Constant	56: Integer
   lol	aaa_lol	Variable	: Integer
 Code generation:
-(1) LABEL _MODULE_Main
-(2) LABEL _PROCEDURE_lol
-(3) = aaa_lol 56
-(4) RET
-(5) LABEL _MODULESTART
-(6) CALL _PROCEDURE_lol
-(7) BOUNDS arrv 0
-(8) ADDR arrv 1
-(9) BOUNDS (8) 1
-(10) * 2 (9)
-(11) +  (10)
-(12) ADDR (8) (11)
-(13) BOUNDS (12) 2
-(14) * 4 (13)
-(15) +  (14)
-(16) ADDR (12) (15)
-(17) = (16) 4
-
+Semantic error:
+14:5 in 'lol' <-- can't call function returning void!

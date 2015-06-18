@@ -529,8 +529,9 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
         	}
         }
         if (actualParNumber != attributes->getDesiredInput().size())
-        	throw SemanticException{funToken, "is used with wrong number of parameters"};
-
+        	throw SemanticException{funToken, "is used with wrong number of parameters!"};
+        if ((*this == "functioncall") && attributes->getReturningType() == NameAttributes::Type::Void)
+        	throw SemanticException{funToken, "can't call function returning void!"};
         code.emitCode("CALL _PROCEDURE_" + funcName);
         if (m_rule.m_number == 104)
             return code.emitCode("POP");
