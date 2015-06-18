@@ -61,9 +61,12 @@ Lexical analyze:
 15:9	lbrind	"["	
 15:10	intval	"2"	2
 15:11	rbrind	"]"	
-15:12	ass	":="	
-15:15	intval	"4"	4
-15:17	end	"end"	
+15:12	lbrind	"["	
+15:13	intval	"4"	4
+15:14	rbrind	"]"	
+15:15	ass	":="	
+15:18	intval	"4"	4
+15:20	end	"end"	
 16:3	id	"Main"	
 16:8	dot	"."	
 16:9	eof		
@@ -188,7 +191,19 @@ Syntax analyze:
 																92: <fcttermadd>::=Lambda
 															87: <fctsimpleexpression>::=Lambda
 														84: <fctexpr>::=Lambda
-													81: <fctvar>::=Lambda
+													80: <fctvar>::=lbrind <indices> rbrind <fctvar> 
+														82: <indices>::=<expression> <fctexpr> 
+															85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
+																89: <SimpleExpression>::=<term> <fcttermadd> 
+																	96: <term>::=<factor> <fcttermmul> 
+																		100: <factor>::=<unsignedconstant> 
+																			30: <unsignedconstant>::=<number> 
+																				34: <number>::=intval 
+																		98: <fcttermmul>::=Lambda
+																	92: <fcttermadd>::=Lambda
+																87: <fctsimpleexpression>::=Lambda
+															84: <fctexpr>::=Lambda
+														81: <fctvar>::=Lambda
 										85: <expression>::=<SimpleExpression> <fctsimpleexpression> 
 											89: <SimpleExpression>::=<term> <fcttermadd> 
 												96: <term>::=<factor> <fcttermmul> 
@@ -206,9 +221,25 @@ Block	 IdName	Attributes
  Main	   arrv	Array	( 1:15, 1:20, 1:4 ): Real
  Main	     as	Array	( 1:15, 1:20, 1:4 ): Real
  Main	      b	Variable	: Real
- Main	    lol	Procedure	 ): Void
+ Main	    lol	Procedure	( ): Void
  Main	    str	Constant	56: Integer
   lol	aaa_lol	Variable	: Integer
 Code generation:
-Semantic error:
-14:8 in 'arrv' <-- array dimension mismatch!
+(1) LABEL _MODULE_Main
+(2) LABEL _PROCEDURE_lol
+(3) = aaa_lol 56
+(4) RET
+(5) LABEL _MODULESTART
+(6) CALL _PROCEDURE_lol
+(7) BOUNDS arrv 0
+(8) ADDR arrv 1
+(9) BOUNDS (8) 1
+(10) * 2 (9)
+(11) +  (10)
+(12) ADDR (8) (11)
+(13) BOUNDS (12) 2
+(14) * 4 (13)
+(15) +  (14)
+(16) ADDR (12) (15)
+(17) = (16) 4
+

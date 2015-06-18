@@ -12,5 +12,5 @@ module Main;
 		end lol;
 begin
  	lol();
- 	arrv[1][2] := 4
+ 	arrv[1][2][4] := 4
 end Main.
