@@ -291,6 +291,8 @@ void ParseTree::UsageCheckProcess(TableOfNames& io_tableOfNames, const std::stri
 	}else if ((*this == "procedurecall") || (*this == "functioncall")){
 		TToken idToken = m_rule.getRightPart()[0].getAssociatedToken();
 		auto procName = idToken.getLexeme();
+		if (!io_tableOfNames.IsDeclared({procName, i_currentBlock}))
+			throw SemanticException{idToken, "is not declared!"};
 		if (io_tableOfNames.getRecord({procName, i_currentBlock}).attributes->getNameType() != NameAttributes::NameType::Procedure)
 			throw SemanticException{idToken, "is not a procedure!"};
 		m_childRules[0].UsageCheckProcess(io_tableOfNames, i_currentBlock);
@@ -365,7 +367,8 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
         TToken idToken = m_rule.m_rightPart[0].getAssociatedToken();
     	auto id = idToken.getLexeme();
         if (m_childRules[0].m_rule.IsLambda()){
-        	if (i_tableOfNames.getRecord({id, i_currentBlock}).attributes->getNameType() != NameAttributes::NameType::Variable)
+        	NameAttributes::NameType type = i_tableOfNames.getRecord({id, i_currentBlock}).attributes->getNameType();
+        	if (type != NameAttributes::NameType::Variable && type != NameAttributes::NameType::Constant)
         		throw SemanticException{idToken, "identifier wrong usage!"};
         	return id;
         }
@@ -477,8 +480,9 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
             code.emitCode("IFFALSE " + expr + " " + labelAfter);
             m_childRules[1].GenerateCode(i_tableOfNames, code, i_currentBlock);
             code.emitCode("GOTO " + labelAfter);
-            auto elsif = m_childRules[2].m_childRules[0];
+            ParseTree elsif = m_childRules[2];
             while (!elsif.m_rule.IsLambda()) {
+            	elsif = elsif.m_childRules[0];
                 auto labelElse = code.getNextLabel();
                 auto expr = elsif.m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
                 code.emitCode("IFFALSE " + expr + " " + labelElse);
@@ -488,8 +492,8 @@ std::string ParseTree::GenerateCode(const TableOfNames& i_tableOfNames, ByteCode
                 elsif = elsif.m_childRules[2];
             }
             //m_childRules[2].m_childRules[1].GenerateCode(i_tableOfNames, code);
-            if (!m_childRules[2].m_childRules[1].m_rule.IsLambda())
-                m_childRules[2].m_childRules[1].m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code);
+            if (!m_childRules[2].m_childRules[1].m_childRules.empty())
+                m_childRules[2].m_childRules[1].m_childRules[0].m_childRules[0].GenerateCode(i_tableOfNames, code, i_currentBlock);
             code.emitCode("LABEL " + labelAfter);
         }
     }

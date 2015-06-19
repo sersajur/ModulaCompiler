@@ -1,16 +1,36 @@
 module Main; 
-	var
-		a, b: real;
-		arrv, as: array 1:15,1:20,1:4 of real;
-	const 
-		str = 56;
-	
-	procedure lol()
-		var aaa_lol:integer;
-		begin
-			aaa_lol := 56
-		end lol;
+	var g, f: integer;
+		arrv: array 1:15,1:20 of real;
+	const a = -6;
+	var jj:Boolean;
+
+	procedure My(*comment*)Proc(var a, b:integer; const k:Boolean)
+	var ag:real;
+	begin
+		a:=5.0
+	end MyProc; 
 begin
- 	a:=lol();
- 	arrv[1][2][4] := 4
+ 	for g = 3 : 15 
+		g:=g+g;
+		if ((5+7)+(a < 7)) then
+			g:=a*(a+a)/a < a;
+			f:=a
+		end;
+		if ((5+7)+(a < 7)) then
+			g:=a*(a+a)/a < a;
+			f:=a
+		else
+			g:=false
+		end;
+		if ((5+7)+(a < 7)) then
+			g:=a*(a+a)/a < a;
+			f:=a
+		elsif (a < 4) then
+			f:=3
+		else
+			g:=false
+		end
+	end;
+	
+	MyProc(arrv[1][3], g, f)
 end Main.
